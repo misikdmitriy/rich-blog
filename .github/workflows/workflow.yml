@@ -79,6 +79,6 @@ jobs:
         id: validate
         run: terraform validate -no-color
 
-      - id: Terraform Plan
+      - name: Terraform Plan
         run: terraform plan -no-color
         working-directory: ./stacks/${{ env.FE_PATH }}
