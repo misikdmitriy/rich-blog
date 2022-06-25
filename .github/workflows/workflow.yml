@@ -88,13 +88,5 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -no-color
 
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color
-
-      - name: Terraform Plan Status
-        if: steps.plan.outcome == 'failure'
-        run: exit 1
-
       - name: Terraform Apply
         run: terraform apply -auto-approve -input=false
