@@ -10,6 +10,8 @@ on:
 env:
   FE_PATH: frontend
   BE_PATH: services
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   build_be:
@@ -20,6 +22,10 @@ jobs:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
+    defaults:
+      run:
+        working-directory: ./${{ env.BE_PATH }}
+
     steps:
       - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
@@ -29,13 +35,9 @@ jobs:
           cache: npm
           cache-dependency-path: ./${{ env.BE_PATH }}/package-lock.json
       - run: npm install
-        working-directory: ./${{ env.BE_PATH }}
       - run: npm run lint
-        working-directory: ./${{ env.BE_PATH }}
       - run: npm run build
-        working-directory: ./${{ env.BE_PATH }}
       - run: npm test
-        working-directory: ./${{ env.BE_PATH }}
 
   build_fe:
     runs-on: ubuntu-latest
@@ -44,6 +46,10 @@ jobs:
       matrix:
         node-version: [16.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+
+    defaults:
+      run:
+        working-directory: ./${{ env.FE_PATH }}
 
     steps:
       - uses: actions/checkout@v2
@@ -54,17 +60,17 @@ jobs:
           cache: npm
           cache-dependency-path: ./${{ env.FE_PATH }}/package-lock.json
       - run: npm install
-        working-directory: ./${{ env.FE_PATH }}
       - run: npm run lint
-        working-directory: ./${{ env.FE_PATH }}
       - run: npm run build
-        working-directory: ./${{ env.FE_PATH }}
       - run: npm test
-        working-directory: ./${{ env.FE_PATH }}
 
   deploy:
     needs: build_fe
     runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./stacks/${{ env.FE_PATH }}
 
     steps:
       - uses: hashicorp/setup-terraform@v2
@@ -75,12 +81,20 @@ jobs:
 
       - name: Terraform Init
         run: terraform init
-        working-directory: ./stacks/${{ env.FE_PATH }}
 
       - name: Terraform Validate
-        id: validate
         run: terraform validate -no-color
 
       - name: Terraform Plan
         run: terraform plan -no-color
-        working-directory: ./stacks/${{ env.FE_PATH }}
+
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan -no-color
+
+      - name: Terraform Plan Status
+        if: steps.plan.outcome == 'failure'
+        run: exit 1
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve -input=false
