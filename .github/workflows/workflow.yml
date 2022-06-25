@@ -71,9 +71,7 @@ jobs:
         with:
           terraform_version: 1.2.3
 
-      - name: ls
-        run: ls
-        working-directory: ./
+      - uses: actions/checkout@v2
 
       - name: Terraform Init
         run: terraform init
