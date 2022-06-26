@@ -1,0 +1,11 @@
+coverage/
+node_modules/
+dist/
+src/**/*.spec.ts
+.eslintignore
+.eslintrc.json
+.gitignore
+docker-compose.yml
+Dockerfile
+jest.config.js
+.env
