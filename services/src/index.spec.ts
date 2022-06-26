@@ -1,5 +1,3 @@
-import { handler } from './index';
-
-test('handler should return 42', async () => {
-	expect(await handler()).toBe(42);
+test('replace it with real test', async () => {
+	expect(1 + 2).toBe(3);
 });
