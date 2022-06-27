@@ -3,6 +3,7 @@ import {
 	Editor as DraftEditor, EditorCommand, EditorState, RichUtils,
 } from 'draft-js';
 import { stateToHTML } from 'draft-js-export-html';
+import { stateFromHTML } from 'draft-js-import-html';
 
 const Editor = () => {
 	const styles = {
@@ -16,8 +17,6 @@ const Editor = () => {
 		EditorState.createEmpty(),
 	);
 
-	console.log(stateToHTML(editorState.getCurrentContent()));
-
 	const handleKeyCommand = (command: EditorCommand) => {
 		const newState = RichUtils.handleKeyCommand(editorState, command);
 		if (newState) {
@@ -27,8 +26,15 @@ const Editor = () => {
 		return 'not-handled';
 	};
 
+	const appendTest = () => {
+		const currentBlocks = stateToHTML(editorState.getCurrentContent());
+		const newState = stateFromHTML(`${currentBlocks}<p><strong>test</strong></p>`);
+		setEditorState(EditorState.createWithContent(newState));
+	};
+
 	return (
 		<div style={styles.editor}>
+			<button onClick={appendTest} type="button">Append bold test</button>
 			<DraftEditor
 				editorState={editorState}
 				onChange={setEditorState}
