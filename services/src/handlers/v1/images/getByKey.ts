@@ -1,4 +1,3 @@
-import { S3 } from 'aws-sdk';
 import express from 'express';
 import { validationResult } from 'express-validator';
 import { getObject } from '../../../aws/s3';
