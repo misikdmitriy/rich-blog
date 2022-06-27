@@ -1,1 +1,3 @@
-export { queryOne, insert, query } from './mongo';
+export {
+	queryOne, insert, query, findOneAndUpdate, mongoUrl,
+} from './mongo';
