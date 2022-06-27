@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 postsV1(app);
 
-const port = Number(process.env.PORT || 3000);
+const port = Number(process.env.PORT || 80);
 
 app.listen(port, () => {
 	console.log(`Example app listening on port ${port}`);
