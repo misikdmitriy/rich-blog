@@ -1,9 +1,10 @@
 import { WithId } from 'mongodb';
 
 export type Post = {
-	name: string,
+	name: string
 	body: string
 	createdDate: Date
+	createdBy: string
 }
 
 export type PostDocument = WithId<Post>;

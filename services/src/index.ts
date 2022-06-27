@@ -5,6 +5,7 @@ import passport from 'passport';
 import MongoStore from 'connect-mongo';
 import api from './handlers';
 import { mongoUrl } from './db';
+import { AppUser } from './types/users';
 
 const {
 	SESSION_SECRET = '',
@@ -24,7 +25,6 @@ app.use(session({
 		collectionName: SESSION_COLLECTION,
 		autoRemove: 'native',
 		dbName: MONGO_DB,
-
 	}),
 }));
 app.use(passport.initialize());
@@ -32,9 +32,8 @@ app.use(passport.session());
 
 api(app);
 
-type User = {} | false | null | undefined;
 passport.serializeUser((user, cb) => cb(null, user));
-passport.deserializeUser((obj, cb) => cb(null, obj as User));
+passport.deserializeUser((obj, cb) => cb(null, obj as AppUser));
 
 const port = Number(process.env.PORT || 80);
 

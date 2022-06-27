@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import { VerifyCallback } from 'passport-google-oauth2';
-import { AppUser, GoogleUser } from '../../../../types/users';
+import { AppUser, AppUserNoRole, GoogleUser } from '../../../../types/users';
 import { findOneAndUpdate } from '../../../../db';
 
 const {
@@ -15,7 +15,7 @@ export const verify = async (
 	done: VerifyCallback,
 ) => {
 	try {
-		const user: AppUser = {
+		const user: AppUserNoRole = {
 			email: profile.emails[0]?.value,
 			provider: 'google',
 			externalId: profile.id,
@@ -29,7 +29,7 @@ export const verify = async (
 		);
 
 		if (result.ok) {
-			done(null, { ...result.value });
+			done(null, { roles: ['user'], ...result.value });
 		} else {
 			done(new Error('cannot save user to DB'), null);
 		}
