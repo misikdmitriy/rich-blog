@@ -7,6 +7,7 @@ import {
 	CardMedia,
 	Typography,
 } from '@mui/material';
+import moment from 'moment';
 import { Post } from '../../types/post';
 
 interface PostCardProps {
@@ -20,16 +21,16 @@ const PostCard = (props: PostCardProps) => {
 		<Grid item container>
 			<Grid item xs={0} sm={2} />
 			<Grid item xs={12} sm={8}>
-				<CardActionArea component="a" href="#">
+				<CardActionArea component="a" href={`/posts/${post.id}`}>
 					<Card sx={{ display: 'flex' }}>
 						<CardContent sx={{ flex: 1 }}>
-							<Typography component="h2" variant="h5">
+							<Typography component="h2" variant="h4">
 								{post.title}
 							</Typography>
 							<Typography variant="subtitle1" color="text.secondary">
-								{post.date}
+								{moment(post.createdDate).format('MMMM Do YYYY')}
 							</Typography>
-							<Typography variant="subtitle1" paragraph>
+							<Typography variant="subtitle1" paragraph sx={{ marginTop: '1em' }}>
 								{post.description}
 							</Typography>
 							<Typography variant="subtitle1" color="primary">

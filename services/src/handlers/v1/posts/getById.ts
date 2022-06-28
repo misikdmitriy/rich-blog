@@ -17,13 +17,21 @@ const getById = async (req: express.Request, res: express.Response, next: expres
 
 		const { id } = req.params;
 
-		const result = await queryOne<PostDocument>(POSTS_COLLECTION, { _id: new ObjectId(id) });
+		const doc = await queryOne<PostDocument>(POSTS_COLLECTION, { _id: new ObjectId(id) });
 
-		if (!result) {
+		if (!doc) {
 			return res.status(404).json({ id });
 		}
 
-		return res.status(200).json(result);
+		return res.status(200).json({
+			id: doc._id,
+			title: doc.title,
+			description: doc.description,
+			image: doc.image,
+			imageLabel: doc.imageLabel,
+			createdDate: doc.createdDate,
+			body: doc.body,
+		});
 	} catch (err) {
 		if ((err as Record<string, unknown>).name === 'BSONTypeError') {
 			return res.status(400).json({ errors: ['id should be in correct format'] });
