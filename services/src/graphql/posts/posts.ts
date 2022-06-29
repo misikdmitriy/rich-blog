@@ -1,32 +1,34 @@
-import { GraphQLID, GraphQLObjectType, GraphQLString } from 'graphql';
+import {
+	GraphQLID, GraphQLNonNull, GraphQLObjectType, GraphQLString,
+} from 'graphql';
 import DateTimeScalar from '../scalars/date-time';
 
 const Post = new GraphQLObjectType({
 	name: 'Post',
 	fields: {
 		id: {
-			type: GraphQLID,
+			type: new GraphQLNonNull(GraphQLID),
 		},
 		title: {
-			type: GraphQLString,
+			type: new GraphQLNonNull(GraphQLString),
 		},
 		description: {
-			type: GraphQLString,
+			type: new GraphQLNonNull(GraphQLString),
 		},
 		image: {
-			type: GraphQLString,
+			type: new GraphQLNonNull(GraphQLString),
 		},
 		imageLabel: {
-			type: GraphQLString,
+			type: new GraphQLNonNull(GraphQLString),
 		},
 		body: {
-			type: GraphQLString,
+			type: new GraphQLNonNull(GraphQLString),
 		},
 		createdDate: {
-			type: DateTimeScalar,
+			type: new GraphQLNonNull(DateTimeScalar),
 		},
 		createdBy: {
-			type: GraphQLString,
+			type: new GraphQLNonNull(GraphQLString),
 		},
 	},
 });

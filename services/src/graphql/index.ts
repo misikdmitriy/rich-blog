@@ -1,4 +1,7 @@
-import { GraphQLList, GraphQLObjectType } from 'graphql';
+import {
+	GraphQLInt,
+	GraphQLList, GraphQLNonNull, GraphQLObjectType, GraphQLSchema,
+} from 'graphql';
 import { query } from '../db';
 import { PostDocument } from '../types/post';
 import Post from './posts/posts';
@@ -7,14 +10,22 @@ const {
 	POSTS_COLLECTION = 'posts',
 } = process.env;
 
-const RootQuery = new GraphQLObjectType({
-	name: 'RootQueryType',
-	fields: {
+const Query = new GraphQLObjectType({
+	name: 'Query',
+	fields: () => ({
 		posts: {
-			type: new GraphQLList(Post),
-			resolve: async (_parent, args) => {
-				const { pageNum, pageSize } = args;
-
+			type: new GraphQLNonNull(new GraphQLList(new GraphQLNonNull(Post))),
+			args: {
+				pageNum: {
+					type: new GraphQLNonNull(GraphQLInt),
+					defaultValue: 0,
+				},
+				pageSize: {
+					type: new GraphQLNonNull(GraphQLInt),
+					defaultValue: 50,
+				},
+			},
+			resolve: async (_parent, { pageNum, pageSize }) => {
 				const cursor = await query<PostDocument>(POSTS_COLLECTION);
 				const docs = await cursor.sort({ createdDate: -1 })
 					.skip(Number(pageSize) * Number(pageNum))
@@ -31,7 +42,11 @@ const RootQuery = new GraphQLObjectType({
 				}));
 			},
 		},
-	},
+	}),
 });
 
-export default RootQuery;
+const RichBlogSchema = new GraphQLSchema({
+	query: Query,
+});
+
+export default RichBlogSchema;
