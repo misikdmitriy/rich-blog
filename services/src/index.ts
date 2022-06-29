@@ -3,9 +3,13 @@ import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import MongoStore from 'connect-mongo';
+import fs from 'fs';
+import { graphqlHTTP } from 'express-graphql';
+import { buildSchema } from 'graphql';
 import api from './handlers';
 import { mongoUrl } from './db';
 import { AppUser } from './types/users';
+import RootQuery from './graphql';
 
 const {
 	SESSION_SECRET = '',
@@ -14,6 +18,8 @@ const {
 } = process.env;
 
 const app = express();
+
+const schema = buildSchema(fs.readFileSync('./schema.graphql').toString());
 
 app.use(express.json());
 app.use(session({
@@ -30,6 +36,11 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use('/graphql', graphqlHTTP({
+	schema,
+	rootValue: RootQuery,
+	graphiql: true,
+}));
 api(app);
 
 passport.serializeUser((user, cb) => cb(null, user));

@@ -1,0 +1,15 @@
+scalar DateTime
+
+type Post {
+    id: ID!,
+	title: String!
+	description: String!
+	image: String!
+	imageLabel: String!
+	body: String!
+	createdDate: DateTime!
+}
+
+type Query {
+    posts(pageNum: Int = 0, pageSize: Int = 50): [Post!]!
+}
