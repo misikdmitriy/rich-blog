@@ -1,4 +1,5 @@
 import posts from './all';
+import body from './body';
 import createPost from './create';
 import post from './get';
 
@@ -9,5 +10,8 @@ export default {
 	},
 	mutations: {
 		createPost,
+	},
+	Post: {
+		body,
 	},
 };

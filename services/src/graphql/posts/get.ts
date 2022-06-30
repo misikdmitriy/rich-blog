@@ -11,12 +11,7 @@ const get = async (_parent: unknown, { id }: { id: string }) => {
 
 	return doc ? {
 		id: doc._id,
-		title: doc.title,
-		description: doc.description,
-		image: doc.image,
-		imageLabel: doc.imageLabel,
-		createdDate: doc.createdDate,
-		body: doc.body,
+		...doc,
 	} : null;
 };
 

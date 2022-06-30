@@ -1,13 +1,16 @@
 import { WithId } from 'mongodb';
 
-export type Post = {
+export type PostNoBody = {
 	title: string
 	description: string
 	image: string
 	imageLabel: string
-	body: string
 	createdDate: Date
 	createdBy: string
 }
 
-export type PostDocument = WithId<Post>;
+export type Post = PostNoBody & {
+	body: string
+}
+
+export type PostDocument = WithId<PostNoBody>;

@@ -17,11 +17,7 @@ const all = async (
 
 	return docs.map((doc) => ({
 		id: doc._id,
-		title: doc.title,
-		description: doc.description,
-		image: doc.image,
-		imageLabel: doc.imageLabel,
-		createdDate: doc.createdDate,
+		...doc,
 	}));
 };
 

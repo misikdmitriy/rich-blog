@@ -1,6 +1,7 @@
+import { putObject } from '../../aws/s3';
 import { insert } from '../../db';
-import { Post } from '../../types/post';
-import { Context } from '../types/context';
+import { AppContext } from '../../types/app';
+import { PostNoBody } from '../../types/post';
 
 interface CreateInput {
     title: string,
@@ -12,6 +13,7 @@ interface CreateInput {
 
 const {
 	POSTS_COLLECTION = 'posts',
+	CONTENT_BUCKET = '',
 } = process.env;
 
 const create = async (
@@ -21,7 +23,7 @@ const create = async (
 			title, body, description, image, imageLabel,
 		},
 	}: { post: CreateInput },
-	{ user, isAuthenticated }: Context,
+	{ user, isAuthenticated }: AppContext,
 ) => {
 	if (!isAuthenticated) {
 		throw new Error('authentication required');
@@ -31,20 +33,24 @@ const create = async (
 		throw new Error('\'admin\' role required');
 	}
 
-	const post: Post = {
-		title: String(title),
-		body: String(body),
-		description: String(description),
-		image: String(image),
-		imageLabel: String(imageLabel),
+	const post: PostNoBody = {
+		title,
+		description,
+		image,
+		imageLabel,
 		createdDate: new Date(),
 		createdBy: user.externalId,
 	};
 
 	const result = await insert(POSTS_COLLECTION, post);
 
-	if (!result.acknowledged) {
+	if (!result.acknowledged || !result.insertedId) {
 		throw new Error('Error on save');
+	}
+
+	const s3Response = await putObject(CONTENT_BUCKET, result.insertedId.toString(), body);
+	if (s3Response.$response.error) {
+		throw new Error('Error on body save');
 	}
 
 	return { id: result.insertedId, ...post };
