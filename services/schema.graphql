@@ -19,9 +19,17 @@ input CreatePostInput {
     body: String!
 }
 
+input FilterPostsInput {
+    id: ID
+}
+
+input PaginationInput {
+    skip: Int!, 
+    take: Int!
+}
+
 type Query {
-    posts(pageNum: Int! = 0, pageSize: Int! = 10): [Post!]!
-    post(id: ID!): Post
+    posts(filter: FilterPostsInput, pagination: PaginationInput): [Post!]!
 }
 
 type Mutation {
