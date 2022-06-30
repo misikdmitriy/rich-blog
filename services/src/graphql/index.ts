@@ -1,5 +1,5 @@
 import Posts from './posts/posts';
-import DateTimeScalar from './scalars/date-time';
+import DateTime from './scalars/date-time';
 
 export default {
 	Query: {
@@ -9,5 +9,5 @@ export default {
 		...Posts.mutations,
 	},
 	Post: Posts.Post,
-	DateTime: DateTimeScalar,
+	DateTime,
 };
