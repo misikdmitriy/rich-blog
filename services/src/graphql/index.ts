@@ -1,16 +1,12 @@
-import {
-	GraphQLObjectType,
-	GraphQLSchema,
-} from 'graphql';
-import PostsQueries from './posts/posts';
+import Posts from './posts/posts';
+import DateTimeScalar from './scalars/date-time';
 
-const RichBlogSchema = new GraphQLSchema({
-	query: new GraphQLObjectType({
-		name: 'Query',
-		fields: () => ({
-			...PostsQueries.queries,
-		}),
-	}),
-});
-
-export default RichBlogSchema;
+export default {
+	Query: {
+		...Posts.queries,
+	},
+	Mutation: {
+		...Posts.mutations,
+	},
+	DateTime: DateTimeScalar,
+};

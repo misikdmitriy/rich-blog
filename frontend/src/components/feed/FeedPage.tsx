@@ -1,19 +1,30 @@
 import React, { useState, useEffect } from 'react';
+import { ApolloQueryResult, useApolloClient } from '@apollo/client';
 import { Grid } from '@mui/material';
 import { Post } from '../../types/post';
 import PostCard from '../post/PostCard';
-import { fetchPosts } from '../../services/posts';
+import { PostsQuery } from '../../graphql/posts';
 
 const FeedPage = () => {
+	const client = useApolloClient();
+
 	const [nextPage, setNextPage] = useState(0);
-	const [posts, setPosts] = useState<Post[] | undefined>();
+	const [posts, setPosts] = useState<Post[]>([]);
+
+	const fetchData = async () => {
+		const { data: { posts: data } } : ApolloQueryResult<{ posts: Post[] }> = await client.query({
+			query: PostsQuery,
+			variables: {
+				pageNum: nextPage,
+			},
+		});
+
+		setPosts(data);
+		setNextPage(nextPage + 1);
+	};
 
 	useEffect(() => {
-		fetchPosts(nextPage)
-			.then(({ result }) => {
-				setPosts(result.docs);
-				setNextPage((prev) => prev + 1);
-			});
+		fetchData();
 	}, []);
 
 	return (
