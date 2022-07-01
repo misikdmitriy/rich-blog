@@ -8,6 +8,7 @@ const {
 
 interface FilterPostsInput {
 	id?: string
+	shortUrl?: string
 }
 
 interface PaginationInput {
@@ -28,6 +29,10 @@ const all = async (
 
 	if (filterArgs?.id) {
 		filter._id = new ObjectId(filterArgs.id);
+	}
+
+	if (filterArgs?.shortUrl) {
+		filter.shortUrl = filterArgs.shortUrl;
 	}
 
 	const cursor = await query<PostDocument>(

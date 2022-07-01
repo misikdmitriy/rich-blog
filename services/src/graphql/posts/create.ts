@@ -4,6 +4,7 @@ import { AppContext } from '../../types/app';
 import { PostNoBody } from '../../types/post';
 
 interface CreateInput {
+	shortUrl: string,
     title: string,
     body: string,
     description: string,
@@ -20,7 +21,7 @@ const create = async (
 	_parent: unknown,
 	{
 		post: {
-			title, body, description, image, imageLabel,
+			shortUrl, title, body, description, image, imageLabel,
 		},
 	}: { post: CreateInput },
 	{ user, isAuthenticated }: AppContext,
@@ -35,6 +36,7 @@ const create = async (
 
 	const post: PostNoBody = {
 		title,
+		shortUrl,
 		description,
 		image,
 		imageLabel,

@@ -61,7 +61,7 @@ const FeedPage = () => {
 
 	const displayItems = () => (
 		<>
-			{posts?.map((post) => <PostCard key={Math.random()} post={post} />)}
+			{posts?.map((post) => <PostCard key={post.shortUrl} post={post} />)}
 			<Grid item>
 				{displayLoadMore()}
 			</Grid>

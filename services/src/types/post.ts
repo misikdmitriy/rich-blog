@@ -1,6 +1,7 @@
 import { WithId } from 'mongodb';
 
 export type PostNoBody = {
+	shortUrl: string
 	title: string
 	description: string
 	image: string
