@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
-import { Button, CircularProgress, Grid } from '@mui/material';
+import {
+	Button, CircularProgress, Grid, Snackbar, Alert,
+} from '@mui/material';
 import { Post } from '../../types/post';
 import PostCard from '../post/PostCard';
 import { PostsQuery } from '../../graphql/posts';
@@ -20,6 +22,7 @@ const FeedPage = () => {
 			} = {},
 		} = {},
 		loading,
+		error,
 		fetchMore,
 	} = useQuery<{ posts: PostsResult }>(PostsQuery, {
 		variables: {
@@ -29,6 +32,16 @@ const FeedPage = () => {
 	});
 
 	const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
+	const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
+
+	const openSnackbar = () => setSnackbarOpen(true);
+	const closeSnackbar = () => setSnackbarOpen(false);
+
+	useEffect(() => {
+		if (error) {
+			openSnackbar();
+		}
+	}, [error]);
 
 	const loadMore = async () => {
 		setIsLoadingMore(true);
@@ -69,9 +82,20 @@ const FeedPage = () => {
 	);
 
 	return (
-		<Grid container spacing={3} alignItems="center" direction="column">
-			{loading ? displayLoading() : displayItems()}
-		</Grid>
+		<>
+			<Snackbar
+				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+				autoHideDuration={6000}
+				open={snackbarOpen}
+				onClose={closeSnackbar}
+			>
+				<Alert onClose={closeSnackbar} severity="error">{error?.message}</Alert>
+			</Snackbar>
+			<Grid container spacing={3} alignItems="center" direction="column">
+				{loading ? displayLoading() : displayItems()}
+			</Grid>
+		</>
+
 	);
 };
 

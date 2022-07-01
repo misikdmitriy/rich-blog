@@ -8,7 +8,7 @@ const App = () => (
 	<>
 		<header><Header sections={[]} title="Blog" /></header>
 		<main>
-			<Container maxWidth="lg"><AppRoutes /></Container>
+			<Container maxWidth="xl"><AppRoutes /></Container>
 		</main>
 		<footer><Footer title="Blog" description="Interesting" /></footer>
 	</>

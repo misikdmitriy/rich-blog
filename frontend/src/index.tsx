@@ -10,13 +10,11 @@ import {
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { PostsResponse } from './types/post';
+import './styles/index.scss';
 
 const theme = createTheme({
 	typography: {
 		fontFamily: [
-			'-apple-system',
-			'BlinkMacSystemFont',
-			'"Segoe UI"',
 			'Roboto',
 			'"Helvetica Neue"',
 			'Arial',

@@ -3,7 +3,9 @@ import {
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import React, { useState } from 'react';
+import { useQuery } from '@apollo/client';
 import LoginDialog from '../login/LoginDialog';
+import { Me } from '../../graphql/me';
 
 interface HeaderProps {
   sections: ReadonlyArray<{
@@ -16,10 +18,22 @@ interface HeaderProps {
 const Header = (props: HeaderProps) => {
 	const { sections, title } = props;
 
+	const {
+		data: {
+			me: {
+				isAuthenticated = false,
+			} = {},
+		} = {}, loading,
+	} = useQuery<{me: {isAuthenticated: boolean}}>(Me);
+
 	const [signInOpen, setSignInOpen] = useState<boolean>(false);
 
 	const openSignIn = () => setSignInOpen(true);
 	const closeSignIn = () => setSignInOpen(false);
+
+	const signOut = () => {
+		window.location.href = `/api/v1/auth/logout?returnTo=${window.location.href}`;
+	};
 
 	return (
 		<>
@@ -38,9 +52,16 @@ const Header = (props: HeaderProps) => {
 				<IconButton>
 					<SearchIcon />
 				</IconButton>
-				<Button variant="outlined" size="small" onClick={openSignIn}>
-					Sign In
-				</Button>
+				{!loading && !isAuthenticated && (
+					<Button variant="outlined" size="small" onClick={openSignIn}>
+						Sign In
+					</Button>
+				)}
+				{!loading && isAuthenticated && (
+					<Button variant="outlined" size="small" onClick={signOut}>
+						Sign Out
+					</Button>
+				)}
 				<LoginDialog title="Sign In" open={signInOpen} close={closeSignIn} />
 			</Toolbar>
 			<Toolbar

@@ -36,7 +36,21 @@ type PostResult {
     hasNext: Boolean!
 }
 
+type AppUser {
+    id: String!
+    externalId: String
+    email: String
+    provider: String!
+    roles: [String!]!
+}
+
+type AuthResult {
+    isAuthenticated: Boolean!
+    user: AppUser
+}
+
 type Query {
+    me: AuthResult!
     posts(filter: FilterPostsInput, pagination: PaginationInput): PostResult!
 }
 

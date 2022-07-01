@@ -1,5 +1,6 @@
 import { Request } from 'express';
 import { VerifyCallback } from 'passport-google-oauth2';
+import { WithId } from 'mongodb';
 import { AppUser, AppUserNoRole, GoogleUser } from '../../../../types/users';
 import { findOneAndUpdate } from '../../../../db';
 
@@ -21,7 +22,7 @@ export const verify = async (
 			externalId: profile.id,
 		};
 
-		const result = await findOneAndUpdate<AppUser>(
+		const result = await findOneAndUpdate<WithId<AppUser>>(
 			USERS_COLLECTION,
 			user,
 			{ externalId: user.externalId },
@@ -29,7 +30,7 @@ export const verify = async (
 		);
 
 		if (result.ok) {
-			done(null, { roles: ['user'], ...result.value });
+			done(null, { roles: ['user'], id: result.value!._id, ...result.value });
 		} else {
 			done(new Error('cannot save user to DB'), null);
 		}
