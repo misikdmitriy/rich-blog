@@ -9,5 +9,6 @@ export interface Post {
 }
 
 export interface PostsResponse {
-	docs: Post[]
+	posts: Post[]
+	hasNext: boolean
 }

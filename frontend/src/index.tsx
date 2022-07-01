@@ -9,6 +9,7 @@ import {
 } from '@apollo/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+import { PostsResponse } from './types/post';
 
 const theme = createTheme({
 	typography: {
@@ -27,13 +28,29 @@ const theme = createTheme({
 	},
 });
 
+const cache = new InMemoryCache({
+	typePolicies: {
+		Query: {
+			fields: {
+				posts: {
+					keyArgs: false,
+					merge: (existing: PostsResponse | undefined, incoming: PostsResponse) => ({
+						hasNext: incoming.hasNext,
+						posts: [...(existing?.posts || []), ...incoming.posts],
+					}),
+				},
+			},
+		},
+	},
+});
+
 const client = new ApolloClient({
 	uri: '/graphql',
-	cache: new InMemoryCache(),
+	cache,
 });
 
 const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement,
+	document.getElementById('root') as HTMLElement,
 );
 root.render(
 	<React.StrictMode>

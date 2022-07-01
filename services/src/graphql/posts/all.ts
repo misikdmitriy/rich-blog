@@ -34,15 +34,23 @@ const all = async (
 		POSTS_COLLECTION,
 		filter,
 	);
-	const docs = await cursor.sort({ createdDate: -1 })
-		.skip(Number(pagination?.skip || 0))
-		.limit(Number(pagination?.take || 10))
-		.toArray();
 
-	return docs.map((doc) => ({
-		id: doc._id,
-		...doc,
-	}));
+	const { skip, take } = pagination || { skip: 0, take: 10 };
+
+	const fetchCursor = cursor.sort({ createdDate: -1 })
+		.skip(skip)
+		.limit(take)
+		.map((doc) => ({
+			id: doc._id,
+			...doc,
+		}));
+
+	const posts = await fetchCursor.toArray();
+
+	return {
+		posts,
+		hasNext: posts.length === take,
+	};
 };
 
 export default all;

@@ -28,8 +28,13 @@ input PaginationInput {
     take: Int!
 }
 
+type PostResult {
+    posts: [Post!]!
+    hasNext: Boolean!
+}
+
 type Query {
-    posts(filter: FilterPostsInput, pagination: PaginationInput): [Post!]!
+    posts(filter: FilterPostsInput, pagination: PaginationInput): PostResult!
 }
 
 type Mutation {
