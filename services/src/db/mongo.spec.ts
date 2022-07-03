@@ -1,13 +1,24 @@
-import { queryOne } from './mongo';
-import { MongoClient } from './__mocks__/mongodb';
+let fineOneResult: unknown = undefined;
 
-jest.mock('mongodb');
+jest.mock('mongodb', () => ({
+	MongoClient: jest.fn().mockImplementation(() => ({
+		connect: () => { },
+
+		db: () => ({
+			collection: jest.fn().mockImplementation(() => ({
+				findOne: () => fineOneResult,
+			})),
+		}),
+	}))
+}));
+
+import { queryOne } from './mongo';
 
 describe('queryOne', () => {
 	test('should return item', async () => {
 		// arrange
 		const expected = {};
-		MongoClient.setReturn(expected);
+		fineOneResult = expected;
 
 		// act
 		const actual = await queryOne('');

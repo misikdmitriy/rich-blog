@@ -28,14 +28,16 @@
             "error",
             "ignorePackages",
             {
-              "js": "never",
-              "jsx": "never",
-              "ts": "never",
-              "tsx": "never"
+                "js": "never",
+                "jsx": "never",
+                "ts": "never",
+                "tsx": "never"
             }
-         ],
-         "no-console": "off",
-         "no-underscore-dangle": "off"
+        ],
+        "no-console": "off",
+        "no-underscore-dangle": "off",
+        "no-unused-vars": "error",
+        "typescript/no-unused-vars": "error",
     },
     "settings": {
         "import/parsers": {
