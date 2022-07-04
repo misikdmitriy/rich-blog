@@ -13,7 +13,7 @@ interface PostsResult {
 }
 
 const FeedPage = () => {
-	const take = 5;
+	const take = 4;
 	const {
 		data: {
 			posts: {
@@ -54,7 +54,7 @@ const FeedPage = () => {
 		setIsLoadingMore(false);
 	};
 
-	const displayLoading = () => <CircularProgress />;
+	const displayLoading = () => <Grid item><CircularProgress /></Grid>;
 
 	const displayLoadMore = () => {
 		if (isLoadingMore) {
@@ -72,14 +72,7 @@ const FeedPage = () => {
 		return null;
 	};
 
-	const displayItems = () => (
-		<>
-			{posts?.map((post) => <PostCard key={post.shortUrl} post={post} />)}
-			<Grid item>
-				{displayLoadMore()}
-			</Grid>
-		</>
-	);
+	const displayItems = () => posts?.map((post) => <PostCard key={post.shortUrl} post={post} />);
 
 	return (
 		<>
@@ -91,11 +84,15 @@ const FeedPage = () => {
 			>
 				<Alert onClose={closeSnackbar} severity="error">{error?.message}</Alert>
 			</Snackbar>
-			<Grid container spacing={3} alignItems="center" direction="column">
+			<Grid container spacing={6} justifyContent="center">
 				{loading ? displayLoading() : displayItems()}
 			</Grid>
+			<Grid container justifyContent="center" sx={{ marginTop: '1.5em' }}>
+				<Grid item>
+					{displayLoadMore()}
+				</Grid>
+			</Grid>
 		</>
-
 	);
 };
 
