@@ -1,7 +1,7 @@
 import { Request } from 'express';
 import { VerifyCallback } from 'passport-google-oauth2';
 import { WithId } from 'mongodb';
-import { AppUser, AppUserNoRole, GoogleUser } from '../../../../types/users';
+import { AppUser, AppUserNoRoleNoId, GoogleUser } from '../../../../types/users';
 import { findOneAndUpdate } from '../../../../db';
 
 const {
@@ -16,7 +16,7 @@ export const verify = async (
 	done: VerifyCallback,
 ) => {
 	try {
-		const user: AppUserNoRole = {
+		const user: AppUserNoRoleNoId = {
 			email: profile.emails[0]?.value,
 			provider: 'google',
 			externalId: profile.id,

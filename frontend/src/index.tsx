@@ -13,6 +13,20 @@ import { PostsResponse } from './types/post';
 import './styles/index.scss';
 
 const theme = createTheme({
+	palette: {
+		primary: {
+			light: '#ff795f',
+			main: '#f44336',
+			dark: '#b9000a',
+			contrastText: '#fff',
+		},
+		secondary: {
+			light: '#ff7961',
+			main: '#f44336',
+			dark: '#ba000d',
+			contrastText: '#000',
+		},
+	},
 	typography: {
 		fontFamily: [
 			'Roboto',

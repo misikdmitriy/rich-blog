@@ -12,10 +12,14 @@ export type GoogleUser = {
 
 export type AppRole = 'user' | 'admin'
 
-export type AppUserNoRole = {
+export type AppUserNoRoleNoId = {
     externalId: string
     email?: string
     provider: string;
+}
+
+export type AppUserNoRole = AppUserNoRoleNoId & {
+    id: string
 }
 
 export type AppUser = AppUserNoRole & {

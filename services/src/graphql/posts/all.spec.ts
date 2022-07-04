@@ -45,8 +45,7 @@ jest.mock('../../db', () => ({
 	})
 }));
 
-const collectionName = 'test_posts';
-process.env.POSTS_COLLECTION = collectionName;
+process.env.POSTS_COLLECTION = 'test_posts';
 
 import all from './all';
 import { Filter, ObjectId } from 'mongodb';
@@ -123,7 +122,7 @@ describe('all', () => {
 		'all should return correct data (id %i)',
 		async (_id, collection, filter, pagination, hasNext, posts) => {
 			// arrange
-			data[collectionName] = collection;
+			data[process.env.POSTS_COLLECTION as string] = collection;
 
 			// act
 			const result = await all(undefined, { filter, pagination });

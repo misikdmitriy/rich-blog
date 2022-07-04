@@ -1,7 +1,6 @@
 import { faker } from '@faker-js/faker';
 
-const contentBucket = faker.word.noun();
-process.env.CONTENT_BUCKET = contentBucket;
+process.env.CONTENT_BUCKET = faker.word.noun();
 
 import { ObjectId } from "mongodb";
 import body from "./body";
@@ -42,7 +41,7 @@ describe('body', () => {
 		// assert
 		expect(result).toBe(content);
 		expect(getObject).toBeCalledTimes(1);
-		expect(getObject).toBeCalledWith(contentBucket, id.toString());
+		expect(getObject).toBeCalledWith(process.env.CONTENT_BUCKET, id.toString());
 	});
 
 	test('should throw error', async () => {

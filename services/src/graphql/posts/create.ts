@@ -41,7 +41,7 @@ const create = async (
 		image,
 		imageLabel,
 		createdDate: new Date(),
-		createdBy: user.externalId,
+		createdBy: user.id,
 	};
 
 	const result = await insert(POSTS_COLLECTION, post);
