@@ -29,7 +29,7 @@ const theme = createTheme({
 	},
 	typography: {
 		fontFamily: [
-			'Arial',
+			'Work Sans',
 			'sans-serif',
 			'"Apple Color Emoji"',
 			'"Segoe UI Emoji"',

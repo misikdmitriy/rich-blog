@@ -18,7 +18,7 @@ const PostCard = (props: PostCardProps) => {
 	const { post } = props;
 
 	return (
-		<Grid item xs={12} md={6}>
+		<Grid item xs={12} md={4}>
 			<CardActionArea component="a" href={`/posts/${post.shortUrl}`}>
 				<Card sx={{ display: 'flex', overflowY: 'hidden', height: '10em' }}>
 					<CardContent sx={{ flex: 1 }}>

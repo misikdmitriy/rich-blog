@@ -13,7 +13,7 @@ interface PostsResult {
 }
 
 const FeedPage = () => {
-	const take = 4;
+	const take = 9;
 	const {
 		data: {
 			posts: {
