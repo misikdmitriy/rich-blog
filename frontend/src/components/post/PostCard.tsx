@@ -18,9 +18,9 @@ const PostCard = (props: PostCardProps) => {
 	const { post } = props;
 
 	return (
-		<Grid item xs={12} md={6} sx={{ overflowY: 'hidden' }}>
+		<Grid item xs={12} md={6}>
 			<CardActionArea component="a" href={`/posts/${post.shortUrl}`}>
-				<Card sx={{ display: 'flex' }}>
+				<Card sx={{ display: 'flex', overflowY: 'hidden', height: '10em' }}>
 					<CardContent sx={{ flex: 1 }}>
 						<Typography component="h3" variant="h5">
 							{post.title}
@@ -37,7 +37,13 @@ const PostCard = (props: PostCardProps) => {
 					</CardContent>
 					<CardMedia
 						component="img"
-						sx={{ width: 260, display: { xs: 'none', sm: 'block' } }}
+						sx={{
+							width: 260,
+							display: {
+								xs: 'none',
+								sm: 'block',
+							},
+						}}
 						image={post.image}
 						alt={post.imageLabel}
 					/>
