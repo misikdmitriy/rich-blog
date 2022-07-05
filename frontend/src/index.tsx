@@ -29,8 +29,6 @@ const theme = createTheme({
 	},
 	typography: {
 		fontFamily: [
-			'Roboto',
-			'"Helvetica Neue"',
 			'Arial',
 			'sans-serif',
 			'"Apple Color Emoji"',

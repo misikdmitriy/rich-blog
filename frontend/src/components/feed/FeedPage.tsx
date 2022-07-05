@@ -54,7 +54,7 @@ const FeedPage = () => {
 		setIsLoadingMore(false);
 	};
 
-	const displayLoading = () => <Grid item><CircularProgress /></Grid>;
+	const displayLoading = () => <Grid container item xs={12} justifyContent="center"><CircularProgress /></Grid>;
 
 	const displayLoadMore = () => {
 		if (isLoadingMore) {
@@ -84,7 +84,7 @@ const FeedPage = () => {
 			>
 				<Alert onClose={closeSnackbar} severity="error">{error?.message}</Alert>
 			</Snackbar>
-			<Grid container spacing={6} justifyContent="center">
+			<Grid container spacing={6}>
 				{loading ? displayLoading() : displayItems()}
 			</Grid>
 			<Grid container justifyContent="center" sx={{ marginTop: '1.5em' }}>
