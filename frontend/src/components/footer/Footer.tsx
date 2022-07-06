@@ -1,12 +1,11 @@
 import React from 'react';
-import {
-	Box, Container, Typography, Link,
-} from '@mui/material';
+import { Box, Container, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 const Copyright = () => (
 	<Typography variant="body2" color="text.secondary" align="center">
 		{'Copyright © '}
-		<Link color="inherit" href="/">
+		<Link to="/">
 			Blog
 		</Link>
 		{' '}

@@ -8,6 +8,7 @@ import {
 	Typography,
 } from '@mui/material';
 import moment from 'moment';
+import { Link } from 'react-router-dom';
 import { Post } from '../../types/post';
 
 interface PostCardProps {
@@ -19,35 +20,37 @@ const PostCard = (props: PostCardProps) => {
 
 	return (
 		<Grid item xs={12} md={4}>
-			<CardActionArea component="a" href={`/posts/${post.shortUrl}`}>
-				<Card sx={{ display: 'flex', overflowY: 'hidden', height: '10em' }}>
-					<CardContent sx={{ flex: 1 }}>
-						<Typography component="h3" variant="h5">
-							{post.title}
-						</Typography>
-						<Typography variant="subtitle2" color="text.secondary">
-							{moment(post.createdDate).format('MMMM Do YYYY')}
-						</Typography>
-						<Typography variant="subtitle2" paragraph sx={{ marginTop: '1em' }}>
-							{post.description}
-						</Typography>
-						<Typography variant="subtitle2" color="primary">
-							Continue reading...
-						</Typography>
-					</CardContent>
-					<CardMedia
-						component="img"
-						sx={{
-							width: 260,
-							display: {
-								xs: 'none',
-								sm: 'block',
-							},
-						}}
-						image={post.image}
-						alt={post.imageLabel}
-					/>
-				</Card>
+			<CardActionArea>
+				<Link to={`/posts/${post.shortUrl}`} style={{ textDecoration: 'none' }}>
+					<Card sx={{ display: 'flex', overflowY: 'hidden', flexDirection: 'column' }}>
+						<CardMedia
+							component="img"
+							sx={{
+								height: 260,
+								display: {
+									xs: 'none',
+									sm: 'block',
+								},
+							}}
+							image={post.image}
+							alt={post.imageLabel}
+						/>
+						<CardContent>
+							<Typography component="h3" variant="h4">
+								{post.title}
+							</Typography>
+							<Typography variant="body2" color="text.secondary">
+								{moment(post.createdDate).format('MMMM Do YYYY')}
+							</Typography>
+							<Typography variant="body1" paragraph sx={{ marginTop: '1em' }}>
+								{post.description}
+							</Typography>
+							<Typography variant="body1" color="primary">
+								Continue reading...
+							</Typography>
+						</CardContent>
+					</Card>
+				</Link>
 			</CardActionArea>
 		</Grid>
 	);

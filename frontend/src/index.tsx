@@ -9,8 +9,8 @@ import {
 } from '@apollo/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { PostsResponse } from './types/post';
 import './styles/index.scss';
+import { PostsResponse } from './types/post';
 
 const theme = createTheme({
 	palette: {
