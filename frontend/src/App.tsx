@@ -1,10 +1,12 @@
 import React, { useEffect } from 'react';
-import { Container } from '@mui/material';
+import { Container, Box } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { useApolloClient } from '@apollo/client';
 import AppRoutes from './components/routes/AppRoutes';
 import Footer from './components/footer/Footer';
 import Header from './components/header/Header';
+import AppBreadcrumbs from './components/routes/AppBreadcrumbs';
+import AppBar from './components/appBar/AppBar';
 
 const App = () => {
 	const location = useLocation();
@@ -15,15 +17,19 @@ const App = () => {
 	}, [location]);
 
 	return (
-		<>
-			<header><Header sections={[]} title="Blog" /></header>
+		<AppBar>
+			<header><Header title="Blog" /></header>
 			<main>
 				<Container maxWidth="xl">
-					<AppRoutes />
+					<Box display="flex" sx={{ m: 4, flexDirection: 'column' }}>
+						<AppBreadcrumbs>
+							<AppRoutes />
+						</AppBreadcrumbs>
+					</Box>
 				</Container>
 			</main>
 			<footer><Footer title="Blog" description="Interesting" /></footer>
-		</>
+		</AppBar>
 	);
 };
 

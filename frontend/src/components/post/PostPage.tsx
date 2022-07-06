@@ -1,6 +1,7 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import {
+	Box,
 	CircularProgress, Typography,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
@@ -31,18 +32,18 @@ const PostPage = () => {
 	}
 
 	if (loading) {
-		return <CircularProgress />;
+		return (<Box sx={{ m: 4 }} display="flex" justifyContent="center"><CircularProgress /></Box>);
 	}
 
 	return (
-		<div style={{ margin: '1em 4em' }}>
-			<div>
+		<>
+			<Box>
 				<Typography variant="h2" component="h1">
 					{post?.title}
 				</Typography>
-			</div>
-			<div dangerouslySetInnerHTML={{ __html: post?.body || '' }} />
-		</div>
+			</Box>
+			<Box sx={{ m: 2 }} dangerouslySetInnerHTML={{ __html: post?.body || '' }} />
+		</>
 	);
 };
 

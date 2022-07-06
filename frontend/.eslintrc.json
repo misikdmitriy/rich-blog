@@ -5,6 +5,9 @@
         "es2021": true,
         "jest/globals": true
     },
+    "globals": {
+        "JSX": true
+    },
     "extends": [
         "plugin:react/recommended",
         "airbnb"
@@ -32,6 +35,8 @@
                 ]
             }
         ],
+        "no-unused-vars": "off",
+        "@typescript-eslint/no-unused-vars": "error",
         "no-tabs": "off",
         "react/jsx-indent": [
             "error",

@@ -1,18 +1,21 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import CreatePostPage from '../createPost/CreatePostPage';
-import FeedPage from '../feed/FeedPage';
-import NotFound from '../notfound/NotFound';
-import PostPage from '../post/PostPage';
+import routes, { AppRoute, AppRouteWithChildren, hasChildren } from './routes';
+
+const buildRoutes = (
+	appRoutes: (AppRoute | AppRouteWithChildren)[],
+): React.ReactNode[] => appRoutes.map((route) => [
+	(<Route
+		key={route.name}
+		path={route.path}
+		element={route.element}
+	/>),
+	...(hasChildren(route) ? buildRoutes(route.children) : []),
+]);
 
 const AppRoutes = () => (
 	<Routes>
-		<Route path="/" element={<FeedPage />} />
-		<Route path="posts">
-			<Route path="create" element={<CreatePostPage />} />
-			<Route path=":shortUrl" element={<PostPage />} />
-		</Route>
-		<Route path="*" element={<NotFound />} />
+		{buildRoutes(routes)}
 	</Routes>
 );
 

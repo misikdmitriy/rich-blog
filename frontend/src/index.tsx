@@ -36,6 +36,7 @@ const theme = createTheme({
 			'"Segoe UI Symbol"',
 		].join(','),
 	},
+	spacing: 4,
 });
 
 const cache = new InMemoryCache({

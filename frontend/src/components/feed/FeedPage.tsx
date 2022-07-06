@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useQuery } from '@apollo/client';
 import {
-	Button, CircularProgress, Grid, Snackbar, Alert,
+	Button, CircularProgress, Grid, Box,
 } from '@mui/material';
 import { Post } from '../../types/post';
 import PostCard from '../post/PostCard';
 import { PostsQuery } from '../../graphql/posts';
+import { useAppBar } from '../appBar/AppBar';
 
 interface PostsResult {
 	posts: Post[],
@@ -31,15 +32,12 @@ const FeedPage = () => {
 		},
 	});
 
+	const { open: openSnackbar } = useAppBar();
 	const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
-	const [snackbarOpen, setSnackbarOpen] = useState<boolean>(false);
-
-	const openSnackbar = () => setSnackbarOpen(true);
-	const closeSnackbar = () => setSnackbarOpen(false);
 
 	useEffect(() => {
 		if (error) {
-			openSnackbar();
+			openSnackbar(error.message, 'error');
 		}
 	}, [error]);
 
@@ -54,13 +52,9 @@ const FeedPage = () => {
 		setIsLoadingMore(false);
 	};
 
-	const displayLoading = () => <Grid container item xs={12} justifyContent="center"><CircularProgress /></Grid>;
+	const displayLoading = () => <CircularProgress />;
 
 	const displayLoadMore = () => {
-		if (isLoadingMore) {
-			return displayLoading();
-		}
-
 		if (hasNext) {
 			return (
 				<Button variant="outlined" size="small" onClick={loadMore}>
@@ -72,27 +66,20 @@ const FeedPage = () => {
 		return null;
 	};
 
-	const displayItems = () => posts?.map((post) => <PostCard key={post.shortUrl} post={post} />);
-
 	return (
 		<>
-			<Snackbar
-				anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-				autoHideDuration={6000}
-				open={snackbarOpen}
-				onClose={closeSnackbar}
-			>
-				<Alert onClose={closeSnackbar} severity="error">{error?.message}</Alert>
-			</Snackbar>
 			<Grid container spacing={6}>
-				{loading ? displayLoading() : displayItems()}
+				{posts?.map((post) => (
+					<Grid item xs={12} md={4}>
+						<PostCard key={post.shortUrl} post={post} />
+					</Grid>
+				))}
 			</Grid>
-			<Grid container justifyContent="center" sx={{ marginTop: '1.5em' }}>
-				<Grid item>
-					{displayLoadMore()}
-				</Grid>
-			</Grid>
+			<Box sx={{ m: 4 }} display="flex" justifyContent="center">
+				{isLoadingMore || loading ? displayLoading() : displayLoadMore()}
+			</Box>
 		</>
+
 	);
 };
 

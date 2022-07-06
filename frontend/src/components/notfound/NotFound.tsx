@@ -1,28 +1,37 @@
 import React from 'react';
 import {
 	Button,
-	Grid, Typography,
+	Box,
+	Typography,
 } from '@mui/material';
 import { Link } from 'react-router-dom';
 
 const NotFound = () => (
-	<Grid container alignItems="center" justifyContent="center" direction="column" sx={{ height: '60vh' }}>
-		<Grid item>
+	<Box
+		display="flex"
+		alignItems="stretch"
+		justifyContent="center"
+		sx={{
+			flexDirection: 'column',
+			height: '75vh',
+		}}
+	>
+		<Box>
 			<Typography align="center" variant="h2" component="h2" sx={{ textTransform: 'uppercase' }}>
 				Oops!
 			</Typography>
-		</Grid>
-		<Grid item>
+		</Box>
+		<Box>
 			<Typography align="center" variant="subtitle1" component="h6">
 				Error 404: Page Not Found
 			</Typography>
-		</Grid>
-		<Grid item sx={{ marginTop: '1.5em' }}>
+		</Box>
+		<Box sx={{ m: 2 }} display="flex" justifyContent="center">
 			<Link to="/" style={{ textDecoration: 'none' }}>
 				<Button variant="outlined">Back To Main</Button>
 			</Link>
-		</Grid>
-	</Grid>
+		</Box>
+	</Box>
 );
 
 export default NotFound;
