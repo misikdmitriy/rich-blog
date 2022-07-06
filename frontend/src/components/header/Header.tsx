@@ -1,13 +1,25 @@
-import {
-	Typography, Toolbar, Button,
-} from '@mui/material';
 import React, { useState } from 'react';
+import {
+	Typography,
+	Toolbar,
+	Button,
+	Box,
+	Link as OutsideLink,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { useQuery } from '@apollo/client';
+import { Link } from 'react-router-dom';
 import LoginDialog from '../login/LoginDialog';
 import { Me } from '../../graphql/me';
+import { AppUser } from '../../types/user';
 
 interface HeaderProps {
   title: string;
+}
+
+interface AuthResult {
+	isAuthenticated: boolean,
+	user?: AppUser
 }
 
 const Header = (props: HeaderProps) => {
@@ -15,20 +27,18 @@ const Header = (props: HeaderProps) => {
 
 	const {
 		data: {
-			me: {
-				isAuthenticated = false,
-			} = {},
+			me,
 		} = {}, loading,
-	} = useQuery<{me: {isAuthenticated: boolean}}>(Me);
+	} = useQuery<{me: AuthResult}>(Me);
+
+	const { isAuthenticated, user } = me || {};
 
 	const [signInOpen, setSignInOpen] = useState<boolean>(false);
 
 	const openSignIn = () => setSignInOpen(true);
 	const closeSignIn = () => setSignInOpen(false);
 
-	const signOut = () => {
-		window.location.href = `/api/v1/auth/logout?returnTo=${window.location.href}`;
-	};
+	const isAdmin = () => user && user.roles && user.roles.indexOf('admin') > -1;
 
 	return (
 		<Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -42,16 +52,51 @@ const Header = (props: HeaderProps) => {
 			>
 				{title}
 			</Typography>
-			{!loading && !isAuthenticated && (
-				<Button variant="outlined" size="small" onClick={openSignIn}>
-					Sign In
-				</Button>
-			)}
-			{!loading && isAuthenticated && (
-				<Button variant="outlined" size="small" onClick={signOut}>
-					Sign Out
-				</Button>
-			)}
+			<Box>
+				{isAdmin() && (
+					<Link
+						to="/posts/create"
+						style={{ textDecoration: 'none' }}
+					>
+						<Button
+							sx={{ m: 1 }}
+							variant="outlined"
+							size="small"
+							startIcon={<AddIcon />}
+							color="success"
+						>
+							Post
+						</Button>
+					</Link>
+
+				)}
+				{!loading && !isAuthenticated && (
+					<Button
+						sx={{ m: 1 }}
+						variant="outlined"
+						size="small"
+						onClick={openSignIn}
+						color="info"
+					>
+						Sign In
+					</Button>
+				)}
+				{!loading && isAuthenticated && (
+					<OutsideLink
+						href={`/api/v1/auth/logout?returnTo=${window.location.href}`}
+						sx={{ textDecoration: 'none' }}
+					>
+						<Button
+							sx={{ m: 1 }}
+							variant="outlined"
+							size="small"
+							color="error"
+						>
+							Sign Out
+						</Button>
+					</OutsideLink>
+				)}
+			</Box>
 			<LoginDialog title="Sign In" open={signInOpen} close={closeSignIn} />
 		</Toolbar>
 	);

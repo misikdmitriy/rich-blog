@@ -30,7 +30,7 @@ export default [
 				name: 'Create Post',
 			},
 			{
-				path: '/posts/:shortUrl',
+				path: '/posts/id/:shortUrl',
 				element: <PostPage />,
 				name: 'Post',
 			},

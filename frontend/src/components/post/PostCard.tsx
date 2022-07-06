@@ -19,7 +19,7 @@ const PostCard = (props: PostCardProps) => {
 
 	return (
 		<CardActionArea>
-			<Link to={`/posts/${post.shortUrl}`} style={{ textDecoration: 'none' }}>
+			<Link to={`/posts/id/${post.shortUrl}`} style={{ textDecoration: 'none' }}>
 				<Card sx={{ display: 'flex', overflowY: 'hidden', flexDirection: 'column' }}>
 					<CardMedia
 						component="img"

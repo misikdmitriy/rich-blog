@@ -4,5 +4,8 @@ export const Me = gql`
     query {
         me {
             isAuthenticated
+            user {
+                roles
+            }
         }
     }`;
