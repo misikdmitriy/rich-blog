@@ -5,7 +5,7 @@ import {
 	CircularProgress, Typography,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { PostQuery } from '../../graphql/post';
+import { PostQuery } from '../../graphql/queries/post';
 import { Post } from '../../types/post';
 import NotFound from '../notfound/NotFound';
 

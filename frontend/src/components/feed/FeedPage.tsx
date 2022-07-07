@@ -5,7 +5,7 @@ import {
 } from '@mui/material';
 import { Post } from '../../types/post';
 import PostCard from '../post/PostCard';
-import { PostsQuery } from '../../graphql/posts';
+import { PostsQuery } from '../../graphql/queries/posts';
 import { useAppBar } from '../appBar/AppBar';
 
 interface PostsResult {
@@ -70,7 +70,7 @@ const FeedPage = () => {
 		<>
 			<Grid container spacing={6}>
 				{posts?.map((post) => (
-					<Grid item xs={12} md={4}>
+					<Grid key={`grid-${post.shortUrl}`} item xs={12} md={4}>
 						<PostCard key={post.shortUrl} post={post} />
 					</Grid>
 				))}

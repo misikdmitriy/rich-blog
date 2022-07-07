@@ -10,7 +10,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useQuery } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import LoginDialog from '../login/LoginDialog';
-import { Me } from '../../graphql/me';
+import { Me } from '../../graphql/queries/me';
 import { AppUser } from '../../types/user';
 
 interface HeaderProps {

@@ -7,6 +7,7 @@ import Footer from './components/footer/Footer';
 import Header from './components/header/Header';
 import AppBreadcrumbs from './components/routes/AppBreadcrumbs';
 import AppBar from './components/appBar/AppBar';
+import BackdropProgress from './components/progress/BackdropProgress';
 
 const App = () => {
 	const location = useLocation();
@@ -23,7 +24,9 @@ const App = () => {
 				<Container maxWidth="xl">
 					<Box display="flex" sx={{ m: 4, flexDirection: 'column' }}>
 						<AppBreadcrumbs>
-							<AppRoutes />
+							<BackdropProgress>
+								<AppRoutes />
+							</BackdropProgress>
 						</AppBreadcrumbs>
 					</Box>
 				</Container>
