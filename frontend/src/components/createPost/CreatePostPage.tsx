@@ -1,17 +1,28 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
-	Formik, Form, Field, useFormikContext, FormikContextType,
+	Formik,
+	Form,
+	Field,
+	useFormikContext,
+	FormikContextType,
 } from 'formik';
 import { useMutation } from '@apollo/client';
 import * as Yup from 'yup';
 import {
-	Box, TextField, Button,
+	Box,
+	TextField,
+	Button,
+	Tabs,
+	Tab,
+	Typography,
 } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import { CreatePostMutation } from '../../graphql/mutations/createPost';
 import { useBackdrop } from '../progress/BackdropProgress';
 import { useAppBar } from '../appBar/AppBar';
 import { toMessage } from '../../common/errors';
+import { PostContent } from '../../types/post';
 
 const schema = Yup.object().shape({
 	title: Yup.string().required(),
@@ -25,6 +36,7 @@ interface CreatePostValues {
 	title: string,
 	shortUrl: string,
 	description: string,
+	parts: PostContent[]
 }
 
 const CreatePostContext: React.FC = () => {
@@ -40,11 +52,46 @@ const CreatePostContext: React.FC = () => {
 	return null;
 };
 
+interface TabPanelProps {
+	children: React.ReactNode | React.ReactNode[];
+	index: number;
+	value: number;
+  }
+
+const TabPanel = (props: TabPanelProps) => {
+	const {
+		children, value, index, ...other
+	} = props;
+
+	return (
+		<div
+			role="tabpanel"
+			hidden={value !== index}
+			id={`content-tabpanel-${index}`}
+			aria-labelledby={`content-tabpanel-${index}`}
+			{...other}
+		>
+			{value === index && (
+				<Box sx={{ p: 3 }}>
+					{children}
+				</Box>
+			)}
+		</div>
+	);
+};
+
 const CreatePostPage = () => {
 	const [createPost] = useMutation(CreatePostMutation);
 	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
 	const { open: openSnackbar } = useAppBar();
 	const navigate = useNavigate();
+
+	const [activeTab, setActiveTab] = useState(0);
+	const [parts, setParts] = useState<(PostContent & {id: number})[]>([{
+		id: 0,
+		title: 'ToDo: First',
+		content: 'ToDo: Test',
+	}]);
 
 	function createTextField <TName extends keyof CreatePostValues & string>(
 		name: TName,
@@ -84,6 +131,14 @@ const CreatePostPage = () => {
 		);
 	}
 
+	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+		if (newValue >= parts.length) {
+			setParts((old) => [...old, { id: old.length, title: '', content: '' }]);
+		}
+
+		setActiveTab(newValue);
+	};
+
 	return (
 		<Box
 			sx={{ display: 'flex' }}
@@ -106,6 +161,7 @@ const CreatePostPage = () => {
 						title: '',
 						shortUrl: '',
 						description: '',
+						parts,
 					}}
 					validationSchema={schema}
 					onSubmit={async (values) => {
@@ -151,6 +207,22 @@ const CreatePostPage = () => {
 								</Button>
 							</Box>
 							{createTextField('description', 'Description', values, { multiline: true, rows: 3 })}
+							<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+								<Tabs value={activeTab} onChange={handleChange} aria-label="post content tabs">
+									{parts.map((part, index) => (<Tab key={part.id} label={`Part ${index + 1}`} />))}
+									<Tab icon={<AddIcon />} aria-label="add" />
+								</Tabs>
+							</Box>
+							{parts.map((part, index) => (
+								<TabPanel key={part.id} value={activeTab} index={index}>
+									<Typography variant="h4" component="h6">
+										{part.title}
+									</Typography>
+									<Typography variant="body1" paragraph>
+										{part.content}
+									</Typography>
+								</TabPanel>
+							))}
 							<Button
 								sx={{ m: 1 }}
 								variant="outlined"

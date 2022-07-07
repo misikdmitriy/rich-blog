@@ -9,6 +9,11 @@ export interface Post {
 	createdDate: Date
 }
 
+export interface PostContent {
+	title: string,
+	content: string
+}
+
 export interface PostsResponse {
 	posts: Post[]
 	hasNext: boolean
