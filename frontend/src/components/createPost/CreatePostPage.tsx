@@ -36,7 +36,7 @@ interface CreatePostValues {
 	title: string,
 	shortUrl: string,
 	description: string,
-	parts: PostContent[]
+	parts: (PostContent & {id: number})[]
 }
 
 const CreatePostContext: React.FC = () => {
@@ -87,11 +87,6 @@ const CreatePostPage = () => {
 	const navigate = useNavigate();
 
 	const [activeTab, setActiveTab] = useState(0);
-	const [parts, setParts] = useState<(PostContent & {id: number})[]>([{
-		id: 0,
-		title: 'ToDo: First',
-		content: 'ToDo: Test',
-	}]);
 
 	function createTextField <TName extends keyof CreatePostValues & string>(
 		name: TName,
@@ -131,14 +126,6 @@ const CreatePostPage = () => {
 		);
 	}
 
-	const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-		if (newValue >= parts.length) {
-			setParts((old) => [...old, { id: old.length, title: '', content: '' }]);
-		}
-
-		setActiveTab(newValue);
-	};
-
 	return (
 		<Box
 			sx={{ display: 'flex' }}
@@ -161,7 +148,11 @@ const CreatePostPage = () => {
 						title: '',
 						shortUrl: '',
 						description: '',
-						parts,
+						parts: [{
+							id: 0,
+							title: 'ToDo: First',
+							content: 'ToDo: Test',
+						}],
 					}}
 					validationSchema={schema}
 					onSubmit={async (values) => {
@@ -183,58 +174,68 @@ const CreatePostPage = () => {
 						}
 					}}
 				>
-					{(values: FormikContextType<CreatePostValues>) => (
-						<Form style={{
-							display: 'flex',
-							flexDirection: 'column',
-							flexGrow: 1,
-						}}
-						>
-							{createTextField('title', 'Title', values)}
-							<Box sx={{
+					{(values: FormikContextType<CreatePostValues>) => {
+						const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+							if (newValue >= values.values.parts.length) {
+								values.setFieldValue('parts', [...values.values.parts, { id: values.values.parts.length, title: '', content: '' }]);
+							}
+
+							setActiveTab(newValue);
+						};
+
+						return (
+							<Form style={{
 								display: 'flex',
-								flexDirection: 'row',
+								flexDirection: 'column',
+								flexGrow: 1,
 							}}
 							>
-								{createTextField('shortUrl', 'Short URL', values)}
-								<Button
-									sx={{ m: 3 }}
-									size="small"
-									color="secondary"
-									onClick={() => values.setFieldValue('shortUrl', generateShortUrl(values.values.title))}
+								{createTextField('title', 'Title', values)}
+								<Box sx={{
+									display: 'flex',
+									flexDirection: 'row',
+								}}
 								>
-									Regenerate
+									{createTextField('shortUrl', 'Short URL', values)}
+									<Button
+										sx={{ m: 3 }}
+										size="small"
+										color="secondary"
+										onClick={() => values.setFieldValue('shortUrl', generateShortUrl(values.values.title))}
+									>
+										Regenerate
+									</Button>
+								</Box>
+								{createTextField('description', 'Description', values, { multiline: true, rows: 3 })}
+								<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+									<Tabs value={activeTab} onChange={handleChange} aria-label="post content tabs">
+										{values.values.parts.map((part, index) => (<Tab key={part.id} label={`Part ${index + 1}`} />))}
+										<Tab icon={<AddIcon />} aria-label="add" />
+									</Tabs>
+								</Box>
+								{values.values.parts.map((part, index) => (
+									<TabPanel key={part.id} value={activeTab} index={index}>
+										<Typography variant="h4" component="h6">
+											{part.title}
+										</Typography>
+										<Typography variant="body1" paragraph>
+											{part.content}
+										</Typography>
+									</TabPanel>
+								))}
+								<Button
+									sx={{ m: 1 }}
+									variant="outlined"
+									size="large"
+									color="success"
+									type="submit"
+								>
+									Create
 								</Button>
-							</Box>
-							{createTextField('description', 'Description', values, { multiline: true, rows: 3 })}
-							<Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-								<Tabs value={activeTab} onChange={handleChange} aria-label="post content tabs">
-									{parts.map((part, index) => (<Tab key={part.id} label={`Part ${index + 1}`} />))}
-									<Tab icon={<AddIcon />} aria-label="add" />
-								</Tabs>
-							</Box>
-							{parts.map((part, index) => (
-								<TabPanel key={part.id} value={activeTab} index={index}>
-									<Typography variant="h4" component="h6">
-										{part.title}
-									</Typography>
-									<Typography variant="body1" paragraph>
-										{part.content}
-									</Typography>
-								</TabPanel>
-							))}
-							<Button
-								sx={{ m: 1 }}
-								variant="outlined"
-								size="large"
-								color="success"
-								type="submit"
-							>
-								Create
-							</Button>
-							<CreatePostContext />
-						</Form>
-					)}
+								<CreatePostContext />
+							</Form>
+						);
+					}}
 				</Formik>
 			</Box>
 		</Box>
