@@ -3,15 +3,15 @@ import {
 	Dialog, DialogTitle, DialogContent, DialogActions, Button,
 } from '@mui/material';
 import LoginWithGoogle from './LoginWithGoogle';
+import { useDialog } from '../dialog/Dialog';
 
 interface LoginDialogProps {
 	title: string
-	open: boolean
-	close: () => void
 }
 
 const LoginDialog = (props: LoginDialogProps) => {
-	const { title, open, close } = props;
+	const { title } = props;
+	const { isOpen: open, close } = useDialog();
 
 	return (
 		<Dialog open={open} onClose={close}>

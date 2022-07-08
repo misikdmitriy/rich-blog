@@ -122,7 +122,7 @@ describe('all', () => {
 		'all should return correct data (id %i)',
 		async (_id, collection, filter, pagination, hasNext, posts) => {
 			// arrange
-			data[process.env.POSTS_COLLECTION as string] = collection;
+			data[process.env.POSTS_COLLECTION!] = collection;
 
 			// act
 			const result = await all(undefined, { filter, pagination });

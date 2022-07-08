@@ -1,4 +1,5 @@
 import {
+	DeleteOptions,
 	Filter,
 	FindOneAndUpdateOptions,
 	FindOptions,
@@ -64,3 +65,12 @@ export const findOneAndUpdate = async <TType>(
 	const coll = await getCollection<TType>(collection);
 	return coll.findOneAndUpdate(filter, { $set: { ...document } }, options);
 };
+
+export const deleteOne = async <TType>(
+	collection: string,
+	filter: Filter<TType> = {},
+	options: DeleteOptions = {}
+) => {
+	const coll = await getCollection<TType>(collection);
+	return coll.deleteOne(filter, options);
+}

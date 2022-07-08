@@ -25,6 +25,7 @@ const FeedPage = () => {
 		loading,
 		error,
 		fetchMore,
+		refetch,
 	} = useQuery<{ posts: PostsResult }>(PostsQuery, {
 		variables: {
 			take,
@@ -66,12 +67,14 @@ const FeedPage = () => {
 		return null;
 	};
 
+	const onPostDelete = () => refetch();
+
 	return (
 		<>
 			<Grid container spacing={6}>
 				{posts?.map((post) => (
 					<Grid key={`grid-${post.shortUrl}`} item xs={12} md={4}>
-						<PostCard key={post.shortUrl} post={post} />
+						<PostCard key={post.shortUrl} post={post} onPostDeleted={onPostDelete} />
 					</Grid>
 				))}
 			</Grid>

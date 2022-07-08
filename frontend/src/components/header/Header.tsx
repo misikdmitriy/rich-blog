@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
 	Typography,
 	Toolbar,
@@ -7,36 +7,30 @@ import {
 	Link as OutsideLink,
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
-import { useQuery } from '@apollo/client';
 import { Link } from 'react-router-dom';
 import LoginDialog from '../login/LoginDialog';
-import { Me } from '../../graphql/queries/me';
-import { AppUser } from '../../types/user';
+import { useAuth } from '../auth/Auth';
+import Dialog, { DialogConsumer } from '../dialog/Dialog';
 
 interface HeaderProps {
   title: string;
 }
 
-interface AuthResult {
-	isAuthenticated: boolean,
-	user?: AppUser
-}
-
 const Header = (props: HeaderProps) => {
 	const { title } = props;
 
+	const auth = useAuth();
+
 	const {
 		data: {
-			me,
-		} = {}, loading,
-	} = useQuery<{me: AuthResult}>(Me);
+			me = {
+				isAuthenticated: false,
+			},
+		} = {},
+		loading,
+	} = auth || {};
 
-	const { isAuthenticated, user } = me || {};
-
-	const [signInOpen, setSignInOpen] = useState<boolean>(false);
-
-	const openSignIn = () => setSignInOpen(true);
-	const closeSignIn = () => setSignInOpen(false);
+	const { isAuthenticated, user } = me;
 
 	const isAdmin = () => user && user.roles && user.roles.indexOf('admin') > -1;
 
@@ -71,15 +65,22 @@ const Header = (props: HeaderProps) => {
 
 				)}
 				{!loading && !isAuthenticated && (
-					<Button
-						sx={{ m: 1 }}
-						variant="outlined"
-						size="small"
-						onClick={openSignIn}
-						color="info"
-					>
-						Sign In
-					</Button>
+					<Dialog>
+						<DialogConsumer>
+							{({ open }) => (
+								<Button
+									sx={{ m: 1 }}
+									variant="outlined"
+									size="small"
+									onClick={open}
+									color="info"
+								>
+									Sign In
+								</Button>
+							)}
+						</DialogConsumer>
+						<LoginDialog title="Sign In" />
+					</Dialog>
 				)}
 				{!loading && isAuthenticated && (
 					<OutsideLink
@@ -97,7 +98,6 @@ const Header = (props: HeaderProps) => {
 					</OutsideLink>
 				)}
 			</Box>
-			<LoginDialog title="Sign In" open={signInOpen} close={closeSignIn} />
 		</Toolbar>
 	);
 };

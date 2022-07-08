@@ -24,6 +24,10 @@ jest.mock('../../cache', () => {
 	}
 });
 
+jest.mock('./common', () => ({
+    getKeyByPostId: (id: string | ObjectId) => id.toString()
+}));
+
 describe('body', () => {
 	test('should call s3', async () => {
 		// arrange

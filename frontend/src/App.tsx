@@ -8,6 +8,7 @@ import Header from './components/header/Header';
 import AppBreadcrumbs from './components/routes/AppBreadcrumbs';
 import AppBar from './components/appBar/AppBar';
 import BackdropProgress from './components/progress/BackdropProgress';
+import Auth from './components/auth/Auth';
 
 const App = () => {
 	const location = useLocation();
@@ -19,19 +20,21 @@ const App = () => {
 
 	return (
 		<AppBar>
-			<header><Header title="Blog" /></header>
-			<main>
-				<Container maxWidth="xl">
-					<Box display="flex" sx={{ m: 4, flexDirection: 'column' }}>
-						<AppBreadcrumbs>
-							<BackdropProgress>
-								<AppRoutes />
-							</BackdropProgress>
-						</AppBreadcrumbs>
-					</Box>
-				</Container>
-			</main>
-			<footer><Footer title="Blog" description="Interesting" /></footer>
+			<BackdropProgress>
+				<Auth>
+					<header><Header title="Blog" /></header>
+					<main>
+						<Container maxWidth="xl">
+							<Box display="flex" sx={{ m: 4, flexDirection: 'column' }}>
+								<AppBreadcrumbs>
+									<AppRoutes />
+								</AppBreadcrumbs>
+							</Box>
+						</Container>
+					</main>
+					<footer><Footer title="Blog" description="Interesting" /></footer>
+				</Auth>
+			</BackdropProgress>
 		</AppBar>
 	);
 };

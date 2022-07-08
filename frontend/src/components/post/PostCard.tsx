@@ -5,22 +5,67 @@ import {
 	CardContent,
 	CardMedia,
 	Typography,
+	Box,
+	IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
 import { Post } from '../../types/post';
+import { useAuth } from '../auth/Auth';
+import { DeletePost } from '../../graphql/mutations/deletePost';
+import { useBackdrop } from '../progress/BackdropProgress';
+import { useAppBar } from '../appBar/AppBar';
+import { toMessage } from '../../common/errors';
+import Dialog, { DialogConsumer } from '../dialog/Dialog';
+import DeletePostModal from '../deletePost/DeletePostModal';
 
 interface PostCardProps {
 	post: Post;
+	onPostDeleted?: () => void
 }
 
 const PostCard = (props: PostCardProps) => {
-	const { post } = props;
+	const { post, onPostDeleted = () => {} } = props;
+
+	const auth = useAuth();
+	const [deletePost] = useMutation(DeletePost);
+	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
+	const { open: openSnackbar } = useAppBar();
+
+	const {
+		data: {
+			me = {
+				isAuthenticated: false,
+			},
+		} = {},
+	} = auth || {};
+
+	const { user } = me;
+	const isAdmin = () => user?.roles.includes('admin');
+
+	const deletePostHandler = async () => {
+		try {
+			openBackdrop();
+			await deletePost({
+				variables: {
+					id: post.id,
+				},
+			});
+			openSnackbar(`Post '${post.title}' deleted successfully`, 'success');
+			onPostDeleted();
+		} catch (err) {
+			openSnackbar(`Error on post '${post.title}' deletion. Details: ${toMessage(err)}`, 'error');
+		} finally {
+			closeBackdrop();
+		}
+	};
 
 	return (
-		<CardActionArea>
-			<Link to={`/posts/id/${post.shortUrl}`} style={{ textDecoration: 'none' }}>
-				<Card sx={{ display: 'flex', overflowY: 'hidden', flexDirection: 'column' }}>
+		<Card sx={{ display: 'flex', overflowY: 'hidden', flexDirection: 'column' }}>
+			<Link to={`/posts/id/${post.shortUrl}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+				<CardActionArea>
 					<CardMedia
 						component="img"
 						sx={{
@@ -47,10 +92,40 @@ const PostCard = (props: PostCardProps) => {
 							Continue reading...
 						</Typography>
 					</CardContent>
-				</Card>
+				</CardActionArea>
 			</Link>
-		</CardActionArea>
+
+			{isAdmin() && (
+				<Dialog>
+					<DialogConsumer>
+						{({ open }) => (
+							<Box sx={{
+								display: 'flex', alignItems: 'center', pl: 1, pb: 1,
+							}}
+							>
+								<IconButton
+									color="error"
+									aria-label="delete"
+									onClick={(event) => {
+										event.stopPropagation();
+										open();
+									}}
+								>
+									<DeleteIcon />
+								</IconButton>
+							</Box>
+						)}
+					</DialogConsumer>
+
+					<DeletePostModal post={post} accept={deletePostHandler} />
+				</Dialog>
+			)}
+		</Card>
 	);
+};
+
+PostCard.defaultProps = {
+	onPostDeleted: () => {},
 };
 
 export default PostCard;

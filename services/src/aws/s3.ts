@@ -27,3 +27,15 @@ export const putObject = (
 
 	return object.promise();
 };
+
+export const deleteObject = (
+	bucketName: string,
+	key: string,
+) => {
+	const object = s3.deleteObject({
+		Bucket: bucketName,
+		Key: key
+	});
+
+	return object.promise();
+}

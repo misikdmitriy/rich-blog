@@ -2,13 +2,22 @@ import { faker } from '@faker-js/faker';
 
 const insert = jest.fn();
 const putObject = jest.fn();
+const requireAuth = jest.fn();
 
 jest.mock('../../db', () => ({
-    insert: insert
+    insert
 }));
 
 jest.mock('../../aws/s3', () => ({
-    putObject: putObject
+    putObject
+}));
+
+jest.mock('./common', () => ({
+    getKeyByPostId: (id: string | ObjectId) => id.toString()
+}));
+
+jest.mock('../common/auth', () => ({
+    requireAuth
 }));
 
 process.env.POSTS_COLLECTION = faker.random.word();
@@ -16,6 +25,7 @@ process.env.CONTENT_BUCKET = faker.random.word();
 
 import create from './create';
 import { AppUser } from '../../types/users';
+import { ObjectId } from 'mongodb';
 
 describe('create', () => {
     const post = {
@@ -59,6 +69,10 @@ describe('create', () => {
         // assert
         expect(result).toMatchObject({...mongoInsertArg, id: mongoResult.insertedId });
 
+        // auth
+        expect(requireAuth).toBeCalledTimes(1);
+        expect(requireAuth).toBeCalledWith(expect.objectContaining({ isAuthenticated: true, user }), 'admin');
+
         // mongo check
         expect(insert).toBeCalledTimes(1);
         expect(insert).toBeCalledWith(process.env.POSTS_COLLECTION, expect.objectContaining({
@@ -81,7 +95,7 @@ describe('create', () => {
         // assert
         await expect(create(undefined, { post }, { isAuthenticated: true, user }))
             .rejects
-            .toThrow();
+            .toThrow('error on save');
 
         // mongo check
         expect(insert).toBeCalledTimes(1);
@@ -99,7 +113,7 @@ describe('create', () => {
         // assert
         await expect(create(undefined, { post }, { isAuthenticated: true, user }))
             .rejects
-            .toThrow();
+            .toThrow('error on content save');
 
         // mongo check
         expect(insert).toBeCalledTimes(1);
@@ -110,27 +124,13 @@ describe('create', () => {
 
     test('should raise error if unauthenticated', async () => {
         // arrange
+        requireAuth.mockImplementationOnce(() => { throw new Error('authentication required') });
+
         // act
         // assert
         await expect(create(undefined, { post }, { isAuthenticated: false }))
             .rejects
             .toThrow('authentication required');
-
-        // mongo check
-        expect(insert).toBeCalledTimes(0);
-
-        // s3 check
-        expect(putObject).toBeCalledTimes(0);
-    });
-
-
-    test('should raise error if not admin', async () => {
-        // arrange
-        // act
-        // assert
-        await expect(create(undefined, { post }, { isAuthenticated: true, user: Object.assign(user, { roles: ['user'] }) }))
-            .rejects
-            .toThrow('\'admin\' role required');
 
         // mongo check
         expect(insert).toBeCalledTimes(0);

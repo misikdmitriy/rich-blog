@@ -2,6 +2,8 @@ import { putObject } from '../../aws/s3';
 import { insert } from '../../db';
 import { AppContext } from '../../types/app';
 import { PostNoBody } from '../../types/post';
+import { requireAuth } from '../common/auth';
+import { getKeyByPostId } from './common';
 
 interface CreateInput {
 	shortUrl: string,
@@ -24,15 +26,9 @@ const create = async (
 			shortUrl, title, body, description, image, imageLabel,
 		},
 	}: { post: CreateInput },
-	{ user, isAuthenticated }: AppContext,
+	context: AppContext,
 ) => {
-	if (!isAuthenticated) {
-		throw new Error('authentication required');
-	}
-
-	if (!user?.roles.includes('admin')) {
-		throw new Error('\'admin\' role required');
-	}
+	requireAuth(context, 'admin');
 
 	const post: PostNoBody = {
 		title,
@@ -41,18 +37,18 @@ const create = async (
 		image,
 		imageLabel,
 		createdDate: new Date(),
-		createdBy: user.id,
+		createdBy: context.user!.id,
 	};
 
 	const result = await insert(POSTS_COLLECTION, post);
 
 	if (!result.acknowledged || !result.insertedId) {
-		throw new Error('Error on save');
+		throw new Error('error on save');
 	}
 
-	const s3Response = await putObject(CONTENT_BUCKET, result.insertedId.toString(), body);
+	const s3Response = await putObject(CONTENT_BUCKET, getKeyByPostId(result.insertedId), body);
 	if (s3Response.$response.error) {
-		throw new Error('Error on body save');
+		throw new Error('error on content save');
 	}
 
 	return { id: result.insertedId, ...post };

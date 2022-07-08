@@ -3,7 +3,7 @@
  * https://jestjs.io/docs/configuration
  */
 
-export default {
+module.exports = {
 	// All imported modules in your tests should be mocked automatically
 	// automock: false,
 
@@ -67,7 +67,11 @@ export default {
 	// globalTeardown: undefined,
 
 	// A set of global variables that need to be available in all test environments
-	// globals: {},
+	globals: {
+		'ts-jest': {
+            isolatedModules: true
+        }
+	},
 
 	// The maximum amount of workers used to run your tests.
 	// Can be specified as % or a number. E.g. maxWorkers:
@@ -154,7 +158,7 @@ export default {
 	// snapshotSerializers: [],
 
 	// The test environment that will be used for testing
-	// testEnvironment: "jest-environment-node",
+	testEnvironment: "node",
 
 	// Options that will be passed to the testEnvironment
 	// testEnvironmentOptions: {},
