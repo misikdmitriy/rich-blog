@@ -1,14 +1,14 @@
 import { putObject } from '../../aws/s3';
 import { insert } from '../../db';
 import { AppContext } from '../../types/app';
-import { PostNoBody } from '../../types/post';
+import { PostNoContent } from '../../types/post';
 import { requireAuth } from '../common/auth';
 import { getKeyByPostId } from './common';
 
 interface CreateInput {
 	shortUrl: string,
     title: string,
-    body: string,
+    content: Record<string, unknown>,
     description: string,
     image: string,
     imageLabel: string,
@@ -23,14 +23,14 @@ const create = async (
 	_parent: unknown,
 	{
 		post: {
-			shortUrl, title, body, description, image, imageLabel,
+			shortUrl, title, content, description, image, imageLabel,
 		},
 	}: { post: CreateInput },
 	context: AppContext,
 ) => {
 	requireAuth(context, 'admin');
 
-	const post: PostNoBody = {
+	const post: PostNoContent = {
 		title,
 		shortUrl,
 		description,
@@ -46,7 +46,12 @@ const create = async (
 		throw new Error('error on save');
 	}
 
-	const s3Response = await putObject(CONTENT_BUCKET, getKeyByPostId(result.insertedId), body);
+	const s3Response = await putObject(
+		CONTENT_BUCKET,
+		getKeyByPostId(result.insertedId),
+		JSON.stringify(content),
+	);
+
 	if (s3Response.$response.error) {
 		throw new Error('error on content save');
 	}

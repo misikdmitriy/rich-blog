@@ -1,3 +1,3 @@
-import { ObjectId } from "mongodb";
+import { ObjectId } from 'mongodb';
 
-export const getKeyByPostId = (id: string | ObjectId) => `${id}.json`
+export const getKeyByPostId = (id: string | ObjectId) => `${id}.json`;

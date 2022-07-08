@@ -1,5 +1,5 @@
 import posts from './all';
-import body from './body';
+import content from './content';
 import createPost from './create';
 import deletePost from './delete';
 
@@ -12,6 +12,6 @@ export default {
 		deletePost,
 	},
 	Post: {
-		body,
+		content,
 	},
 };

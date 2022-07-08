@@ -5,15 +5,6 @@ import { AppContext } from '../../types/app';
 import { requireAuth } from '../common/auth';
 import { getKeyByPostId } from './common';
 
-interface CreateInput {
-	shortUrl: string,
-    title: string,
-    body: string,
-    description: string,
-    image: string,
-    imageLabel: string,
-}
-
 const {
 	POSTS_COLLECTION = 'posts',
 	CONTENT_BUCKET = '',

@@ -34,8 +34,8 @@ export const deleteObject = (
 ) => {
 	const object = s3.deleteObject({
 		Bucket: bucketName,
-		Key: key
+		Key: key,
 	});
 
 	return object.promise();
-}
+};

@@ -40,7 +40,7 @@ const all = async (
 		filter,
 	);
 
-	const { skip, take } = pagination || { skip: 0, take: 10 };
+	const { skip = 0, take = 10 } = pagination || {};
 
 	const fetchCursor = cursor.sort({ createdDate: -1 })
 		.skip(skip)

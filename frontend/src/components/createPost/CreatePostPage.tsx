@@ -48,11 +48,7 @@ const CreatePostPage = () => {
 						title: '',
 						shortUrl: '',
 						description: '',
-						parts: [{
-							id: 0,
-							title: 'ToDo: First',
-							content: 'ToDo: Test',
-						}],
+						content: '{}',
 					}}
 					validationSchema={schema}
 					onSubmit={async (values) => {
@@ -61,7 +57,6 @@ const CreatePostPage = () => {
 							await createPost({
 								variables: {
 									...values,
-									body: '<b>ToDo: update body</b>',
 									image: 'ToDo: jpg',
 									imageLabel: 'ToDo: label',
 								},

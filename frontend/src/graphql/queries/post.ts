@@ -6,7 +6,7 @@ export const PostQuery = gql`
             posts {
                 id
                 shortUrl
-                body
+                content
                 title
                 description
                 createdDate

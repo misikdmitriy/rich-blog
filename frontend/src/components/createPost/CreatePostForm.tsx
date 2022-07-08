@@ -43,7 +43,8 @@ const CreatePostForm = () => {
 					Regenerate
 				</Button>
 			</Box>
-			<FormTextField name="description" title="Description" values={values} multiline rows={3} />
+			<FormTextField name="description" title="Description" values={values} multiline rows={2} />
+			<FormTextField name="content" title="Content" values={values} multiline rows={4} />
 			<Button
 				sx={{ m: 1 }}
 				variant="outlined"

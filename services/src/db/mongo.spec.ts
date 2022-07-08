@@ -1,4 +1,6 @@
-let fineOneResult: unknown = undefined;
+import { queryOne } from './mongo';
+
+let fineOneResult: unknown;
 
 jest.mock('mongodb', () => ({
 	MongoClient: jest.fn().mockImplementation(() => ({
@@ -9,10 +11,8 @@ jest.mock('mongodb', () => ({
 				findOne: () => fineOneResult,
 			})),
 		}),
-	}))
+	})),
 }));
-
-import { queryOne } from './mongo';
 
 describe('queryOne', () => {
 	test('should return item', async () => {

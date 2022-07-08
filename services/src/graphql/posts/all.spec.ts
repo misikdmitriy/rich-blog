@@ -1,134 +1,117 @@
-const data: Record<string, Array<unknown>> = {};
+import { faker } from '@faker-js/faker';
+import { ObjectId } from 'mongodb';
+import { query } from '../../db';
+import all from './all';
+
+const sort = jest.fn();
+const skip = jest.fn();
+const limit = jest.fn();
+const map = jest.fn();
+const toArray = jest.fn();
 
 jest.mock('../../db', () => ({
-	query: jest.fn().mockImplementation(<TType extends Record<string, unknown>>(collection: string,
-		filter: Filter<TType> = {}) => {
-		let coll = (data[collection] ?? []) as TType[];
+	query: jest.fn().mockImplementation(() => {
+		const obj: Record<string, unknown> = {
+			sort: sort.mockImplementationOnce(() => obj),
+			skip: skip.mockImplementationOnce(() => obj),
+			limit: limit.mockImplementationOnce(() => obj),
+			map: map.mockImplementationOnce(() => obj),
+			toArray: toArray.mockImplementationOnce(() => Promise.resolve([])),
+		};
 
-		for (const [key, value] of Object.entries(filter)) {
-			coll = coll.filter(x => {
-				const val = x[key];
-				return val instanceof ObjectId 
-					? val.equals(value) 
-					: val === value;
-			});
-		}
-
-		type Mapper = (elem: unknown) => unknown;
-
-		class Cursor {
-			constructor(private collection: unknown[]) { }
-
-			sort(): Cursor { return this }
-
-			skip(count: number): Cursor {
-				this.collection = this.collection.slice(count);
-				return this;
-			}
-
-			limit(count: number): Cursor {
-				this.collection = this.collection.slice(0, count);
-				return this;
-			}
-
-			map(func: Mapper): Cursor {
-				this.collection = this.collection.map(func);
-				return this;
-			}
-
-			toArray(): Promise<unknown[]> {
-				return Promise.resolve(this.collection);
-			}
-		}
-
-		return Promise.resolve(new Cursor(coll));
-	})
+		return Promise.resolve(obj);
+	}),
 }));
 
-process.env.POSTS_COLLECTION = 'test_posts';
+interface FilterPostsInput {
+	id?: string
+	shortUrl?: string
+}
 
-import all from './all';
-import { Filter, ObjectId } from 'mongodb';
+interface PaginationInput {
+	skip: number,
+	take: number
+}
 
 describe('all', () => {
 	test.each([
 		[
-			0,
-			[{
-				a: 1
-			}],
-			{},
-			{ skip: 0, take: 2 },
-			false,
-			[{
-				a: 1
-			}],
-		],
-		[
 			1,
-			[{
-				_id: new ObjectId('62c1728b726af773b749b909'),
-				b: 2
-			}, {
-				_id: new ObjectId('62c1728b726af773b749b900'),
-				b: 2
-			}],
-			{ id: '62c1728b726af773b749b900' },
-			{ skip: 0, take: 2 },
-			false,
-			[{
-				_id: new ObjectId('62c1728b726af773b749b900'),
-				b: 2,
-				id: new ObjectId('62c1728b726af773b749b900')
-			}],
+			{ id: faker.database.mongodbObjectId(), shortUrl: '2' },
+			{ skip: 3, take: 4 },
 		],
 		[
 			2,
-			[{
-				shortUrl: 'shortUrl1'
-			}, {
-				shortUrl: 'shortUrl2'
-			}],
-			{ shortUrl: 'shortUrl2' },
-			{ skip: 0, take: 2 },
-			false,
-			[{
-				shortUrl: 'shortUrl2'
-			}],
+			{ shortUrl: '2' },
+			{ skip: 5, take: 6 },
 		],
 		[
 			3,
-			[{
-				shortUrl: 'shortUrl1'
-			}, {
-				shortUrl: 'shortUrl2'
-			}, {
-				shortUrl: 'shortUrl1'
-			}, {
-				shortUrl: 'shortUrl3'
-			}, {
-				shortUrl: 'shortUrl1'
-			}],
-			{ shortUrl: 'shortUrl1' },
-			{ skip: 1, take: 2 },
-			true,
-			[{
-				shortUrl: 'shortUrl1'
-			}, {
-				shortUrl: 'shortUrl1'
-			}],
-		]
-	])(
-		'all should return correct data (id %i)',
-		async (_id, collection, filter, pagination, hasNext, posts) => {
+			{ id: faker.database.mongodbObjectId() },
+			{ skip: 7, take: 10 },
+		],
+		[
+			4,
+			{ id: faker.database.mongodbObjectId() },
+			undefined,
+		],
+		[
+			5,
+			undefined,
+			{ skip: 5, take: 15 },
+		],
+		[
+			6,
+			undefined,
+			{ take: 15 },
+		],
+		[
+			7,
+			undefined,
+			{ skip: 20 },
+		],
+		[
+			8,
+			undefined,
+			undefined,
+		],
+	] as [number, FilterPostsInput?, PaginationInput?][])(
+		'all should return correct data %s',
+		async (_id, filter, pagination) => {
 			// arrange
-			data[process.env.POSTS_COLLECTION!] = collection;
+			const expectedFilter: Record<string, unknown> = {};
+			if (filter?.id) {
+				expectedFilter._id = new ObjectId(filter.id);
+			}
+
+			if (filter?.shortUrl) {
+				expectedFilter.shortUrl = filter.shortUrl;
+			}
 
 			// act
-			const result = await all(undefined, { filter, pagination });
+			await all(undefined, { filter, pagination });
 
 			// assert
-			expect(result).toEqual({ hasNext, posts });
+			expect(query).toBeCalledTimes(1);
+			expect(query).toBeCalledWith(
+				'posts',
+				expect.objectContaining(expectedFilter),
+			);
+
+			expect(sort).toBeCalledTimes(1);
+			expect(sort).toBeCalledWith(expect.objectContaining({
+				createdDate: -1,
+			}));
+
+			expect(skip).toBeCalledTimes(1);
+			expect(skip).toBeCalledWith(pagination?.skip || 0);
+
+			expect(limit).toBeCalledTimes(1);
+			expect(limit).toBeCalledWith(pagination?.take || 10);
+
+			expect(map).toBeCalledTimes(1);
+
+			expect(toArray).toBeCalledTimes(1);
 		},
 	);
 });

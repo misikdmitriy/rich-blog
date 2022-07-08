@@ -69,8 +69,8 @@ export const findOneAndUpdate = async <TType>(
 export const deleteOne = async <TType>(
 	collection: string,
 	filter: Filter<TType> = {},
-	options: DeleteOptions = {}
+	options: DeleteOptions = {},
 ) => {
 	const coll = await getCollection<TType>(collection);
 	return coll.deleteOne(filter, options);
-}
+};

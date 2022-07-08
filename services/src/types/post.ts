@@ -1,6 +1,6 @@
 import { WithId } from 'mongodb';
 
-export type PostNoBody = {
+export type PostNoContent = {
 	shortUrl: string
 	title: string
 	description: string
@@ -10,8 +10,8 @@ export type PostNoBody = {
 	createdBy: string
 }
 
-export type Post = PostNoBody & {
-	body: string
+export type Post = PostNoContent & {
+	content: Record<string, unknown>
 }
 
-export type PostDocument = WithId<PostNoBody>;
+export type PostDocument = WithId<PostNoContent>;

@@ -5,7 +5,7 @@ export interface Post {
 	description: string
 	image: string
 	imageLabel: string
-	body: string
+	content: string
 	createdDate: Date
 }
 

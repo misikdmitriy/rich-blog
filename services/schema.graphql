@@ -1,4 +1,5 @@
 scalar DateTime
+scalar JsonObject
 
 type Post {
     id: ID!
@@ -7,7 +8,7 @@ type Post {
     description: String!
     image: String!
     imageLabel: String!
-    body: String!
+    content: JsonObject!
     createdDate: DateTime!
     createdBy: String!
 }
@@ -18,7 +19,7 @@ input CreatePostInput {
     description: String!
     image: String!
     imageLabel: String!
-    body: String!
+    content: JsonObject!
 }
 
 input FilterPostsInput {

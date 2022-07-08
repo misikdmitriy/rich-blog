@@ -1,6 +1,7 @@
 import Posts from './posts/posts';
 import Me from './me';
 import DateTime from './scalars/date-time';
+import JsonObject from './scalars/json';
 
 export default {
 	Query: {
@@ -12,4 +13,5 @@ export default {
 	},
 	Post: Posts.Post,
 	DateTime,
+	JsonObject,
 };

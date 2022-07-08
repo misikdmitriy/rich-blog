@@ -5,18 +5,21 @@ import { getKeyByPostId } from './common';
 
 const {
 	CONTENT_BUCKET = '',
+	CACHE_TTL = '10800',
 } = process.env;
 
-const body = async (
+const cacheTtl = parseInt(CACHE_TTL, 10);
+
+const content = (
 	{ id }: { id: ObjectId },
-) => getOrSetAsync(`${id}.body`, async () => {
+) => getOrSetAsync(`${id}.content`, async () => {
 	const response = await getObject(CONTENT_BUCKET, getKeyByPostId(id));
 
 	if (response.$response.error) {
-		throw new Error('Cannot get body');
+		throw new Error('cannot get content');
 	}
 
 	return response.Body?.toString('utf8');
-}, 180 * 60);
+}, cacheTtl);
 
-export default body;
+export default content;
