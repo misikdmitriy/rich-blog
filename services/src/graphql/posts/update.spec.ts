@@ -111,7 +111,7 @@ describe('update', () => {
 		// mongo
 		expect(findOneAndUpdate).toBeCalledTimes(1);
 		expect(findOneAndUpdate).toBeCalledWith('posts', expect.objectContaining({
-			availableFor: ['user'],
+			availableFor: ['admin', 'user'],
 		}), expect.objectContaining({
 			_id: new ObjectId(id),
 		}));

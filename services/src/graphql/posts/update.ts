@@ -44,7 +44,7 @@ const create = async (
 	};
 
 	if (availableToUsers) {
-		post.availableFor = ['user'];
+		post.availableFor = ['admin', 'user'];
 	}
 
 	const result = await findOneAndUpdate(POSTS_COLLECTION, post, { _id: new ObjectId(id) });

@@ -38,7 +38,7 @@ const create = async (
 		imageLabel,
 		createdDate: new Date(),
 		createdBy: context.user!.id,
-		availableFor: context.user!.roles,
+		availableFor: [...new Set([...context.user!.roles, 'admin'])],
 	};
 
 	const result = await insert(POSTS_COLLECTION, post);
