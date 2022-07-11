@@ -30,6 +30,11 @@ export default [
 				name: 'Create Post',
 			},
 			{
+				path: '/posts/edit/:postId',
+				element: <CreatePostPage />,
+				name: 'Edit Post',
+			},
+			{
 				path: '/posts/id/:shortUrl',
 				element: <PostPage />,
 				name: 'Post',

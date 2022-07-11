@@ -5,7 +5,6 @@ import { useApolloClient } from '@apollo/client';
 import AppRoutes from './components/routes/AppRoutes';
 import Footer from './components/footer/Footer';
 import Header from './components/header/Header';
-import AppBreadcrumbs from './components/routes/AppBreadcrumbs';
 import AppBar from './components/appBar/AppBar';
 import BackdropProgress from './components/progress/BackdropProgress';
 import Auth from './components/auth/Auth';
@@ -26,9 +25,7 @@ const App = () => {
 					<main>
 						<Container maxWidth="xl">
 							<Box display="flex" sx={{ m: 4, flexDirection: 'column' }}>
-								<AppBreadcrumbs>
-									<AppRoutes />
-								</AppBreadcrumbs>
+								<AppRoutes />
 							</Box>
 						</Container>
 					</main>

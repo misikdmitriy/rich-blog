@@ -1,18 +1,21 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	Formik,
 } from 'formik';
-import { useMutation } from '@apollo/client';
+import { useLazyQuery, useMutation } from '@apollo/client';
 import * as Yup from 'yup';
 import {
 	Box,
 } from '@mui/material';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CreatePostMutation } from '../../graphql/mutations/createPost';
 import { useBackdrop } from '../progress/BackdropProgress';
 import { useAppBar } from '../appBar/AppBar';
 import { toMessage } from '../../common/errors';
 import CreatePostForm from './CreatePostForm';
+import { Post } from '../../types/post';
+import { UpdatePostMutation } from '../../graphql/mutations/updatePost';
+import { PostByIdQuery } from '../../graphql/queries/post';
 
 const schema = Yup.object().shape({
 	title: Yup.string().required(),
@@ -25,11 +28,62 @@ const schema = Yup.object().shape({
 	content: Yup.string().required(),
 });
 
+interface OptionalPostResult {
+    posts: [Post?]
+}
+
 const CreatePostPage = () => {
-	const [createPost] = useMutation(CreatePostMutation);
+	const { postId } = useParams();
+	const navigate = useNavigate();
+
+	const [createPost, {
+		loading: createLoading,
+		error: createError,
+	}] = useMutation(CreatePostMutation);
+
+	const [updatePost, {
+		loading: updateLoading,
+		error: updateError,
+	}] = useMutation(UpdatePostMutation);
+
 	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
 	const { open: openSnackbar } = useAppBar();
-	const navigate = useNavigate();
+
+	const [loadPost, {
+		data,
+		error: errorPost,
+		loading: loadingPost,
+	}] = useLazyQuery<{ posts: OptionalPostResult }>(PostByIdQuery, {
+		variables: {
+			id: postId,
+		},
+	});
+
+	const [post] = data?.posts?.posts || [];
+
+	useEffect(() => {
+		if (postId) {
+			loadPost();
+		}
+	}, [postId]);
+
+	const errorEffect = (error: unknown) => () => {
+		if (errorPost) {
+			openSnackbar(toMessage(error), 'error');
+		}
+	};
+
+	useEffect(errorEffect(errorPost), [errorPost]);
+	useEffect(errorEffect(createError), [createError]);
+	useEffect(errorEffect(updateError), [updateError]);
+
+	useEffect(() => {
+		if (loadingPost || createLoading || updateLoading) {
+			openBackdrop();
+		} else {
+			closeBackdrop();
+		}
+	}, [loadingPost, createLoading, updateLoading]);
 
 	return (
 		<Box
@@ -50,31 +104,34 @@ const CreatePostPage = () => {
 			>
 				<Formik
 					initialValues={{
-						title: '',
-						shortUrl: '',
-						description: '',
-						image: '',
-						imageLabel: '',
-						content: '{}',
+						title: post?.title ?? '',
+						shortUrl: post?.shortUrl ?? '',
+						description: post?.description ?? '',
+						image: post?.image ?? '',
+						imageLabel: post?.imageLabel ?? '',
+						content: post?.content ?? '{}',
 					}}
 					validationSchema={schema}
 					onSubmit={async (values) => {
-						try {
-							openBackdrop();
+						if (!post?.id) {
 							await createPost({
 								variables: {
 									...values,
 								},
 							});
-							navigate('/');
-						} catch (err) {
-							openSnackbar(toMessage(err), 'error');
-						} finally {
-							closeBackdrop();
+						} else {
+							await updatePost({
+								variables: {
+									id: post.id,
+									...values,
+								},
+							});
 						}
+
+						navigate('/');
 					}}
 				>
-					<CreatePostForm />
+					<CreatePostForm post={post} />
 				</Formik>
 			</Box>
 		</Box>

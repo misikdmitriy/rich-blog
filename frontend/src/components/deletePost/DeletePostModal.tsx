@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	Dialog,
 	DialogTitle,
@@ -7,17 +7,53 @@ import {
 	DialogActions,
 	Button,
 } from '@mui/material';
+import { useMutation } from '@apollo/client';
 import { Post } from '../../types/post';
 import { useDialog } from '../dialog/Dialog';
+import { DeletePost } from '../../graphql/mutations/deletePost';
+import { useBackdrop } from '../progress/BackdropProgress';
+import { useAppBar } from '../appBar/AppBar';
+import { toMessage } from '../../common/errors';
 
 interface DeletePostModalProps {
     post: Post,
-    accept: () => void
+    onPostDeleted?: () => void
 }
 
 const DeletePostModal = (props: DeletePostModalProps) => {
-	const { post, accept } = props;
+	const { post, onPostDeleted = () => {} } = props;
 	const { isOpen: open, close } = useDialog();
+
+	const [deletePost, { loading, error }] = useMutation(DeletePost);
+	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
+	const { open: openSnackbar } = useAppBar();
+
+	useEffect(() => {
+		if (loading) {
+			openBackdrop();
+		} else {
+			closeBackdrop();
+		}
+	}, [loading]);
+
+	useEffect(() => {
+		if (error) {
+			openSnackbar(`Error on post '${post.title}' deletion. Details: ${toMessage(error)}`, 'error');
+		}
+	}, [error]);
+
+	const deletePostHandler = async () => {
+		close();
+
+		await deletePost({
+			variables: {
+				id: post.id,
+			},
+		});
+
+		openSnackbar(`Post '${post.title}' deleted successfully`, 'success');
+		onPostDeleted();
+	};
 
 	return (
 		<Dialog
@@ -39,10 +75,7 @@ const DeletePostModal = (props: DeletePostModalProps) => {
 			<DialogActions>
 				<Button onClick={close} color="warning">Cancel</Button>
 				<Button
-					onClick={() => {
-						accept();
-						close();
-					}}
+					onClick={deletePostHandler}
 					autoFocus
 				>
 					Delete
@@ -50,6 +83,10 @@ const DeletePostModal = (props: DeletePostModalProps) => {
 			</DialogActions>
 		</Dialog>
 	);
+};
+
+DeletePostModal.defaultProps = {
+	onPostDeleted: () => {},
 };
 
 export default DeletePostModal;

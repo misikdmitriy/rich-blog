@@ -1,6 +1,7 @@
 import { faker } from '@faker-js/faker';
 import { ObjectId } from 'mongodb';
 import { query } from '../../db';
+import { AppUser } from '../../types/users';
 import all from './all';
 
 const sort = jest.fn();
@@ -89,13 +90,16 @@ describe('all', () => {
 			}
 
 			// act
-			await all(undefined, { filter, pagination });
+			await all(undefined, { filter, pagination }, { isAuthenticated: false });
 
 			// assert
 			expect(query).toBeCalledTimes(1);
 			expect(query).toBeCalledWith(
 				'posts',
-				expect.objectContaining(expectedFilter),
+				expect.objectContaining({
+					...expectedFilter,
+					availableFor: { $in: ['user'] },
+				}),
 			);
 
 			expect(sort).toBeCalledTimes(1);
@@ -114,4 +118,26 @@ describe('all', () => {
 			expect(toArray).toBeCalledTimes(1);
 		},
 	);
+
+	it('all should return correct data for required role', async () => {
+		// arrange
+		const user: AppUser = {
+			id: faker.database.mongodbObjectId(),
+			externalId: faker.datatype.uuid(),
+			provider: 'test',
+			roles: ['admin'],
+			email: faker.internet.email(),
+		};
+
+		// act
+		await all(undefined, {}, { isAuthenticated: false, user });
+
+		// assert
+		expect(query).toBeCalledWith(
+			'posts',
+			expect.objectContaining({
+				availableFor: { $in: ['admin', 'user'] },
+			}),
+		);
+	});
 });

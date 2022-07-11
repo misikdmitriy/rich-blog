@@ -38,6 +38,7 @@ const create = async (
 		imageLabel,
 		createdDate: new Date(),
 		createdBy: context.user!.id,
+		availableFor: context.user!.roles,
 	};
 
 	const result = await insert(POSTS_COLLECTION, post);

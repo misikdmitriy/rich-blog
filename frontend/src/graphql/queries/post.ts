@@ -1,6 +1,6 @@
 import { gql } from '@apollo/client';
 
-export const PostQuery = gql`
+export const PostByShortUrlQuery = gql`
     query ($shortUrl: String!) {
         posts (filter: { shortUrl: $shortUrl }) {
             posts {
@@ -11,6 +11,20 @@ export const PostQuery = gql`
                 description
                 createdDate
             }
-            hasNext
+        }
+    }`;
+
+export const PostByIdQuery = gql`
+    query ($id: ID!) {
+        posts (filter: { id: $id }) {
+            posts {
+                id
+                title
+                shortUrl
+                description
+                content
+                image
+                imageLabel
+            }
         }
     }`;

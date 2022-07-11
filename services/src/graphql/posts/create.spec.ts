@@ -80,6 +80,7 @@ describe('create', () => {
 		expect(insert).toBeCalledTimes(1);
 		expect(insert).toBeCalledWith('posts', expect.objectContaining({
 			...mongoInsertArg,
+			availableFor: ['admin'],
 			createdDate: expect.any(Date),
 			createdBy: user.id,
 		}));

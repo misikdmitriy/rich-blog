@@ -7,7 +7,10 @@ export type PostNoContent = {
 	image: string
 	imageLabel: string
 	createdDate: Date
+	updatedDate?: Date
 	createdBy: string
+	updatedBy?: string
+	availableFor: string[]
 }
 
 export type Post = PostNoContent & {

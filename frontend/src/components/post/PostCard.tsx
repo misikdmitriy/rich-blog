@@ -11,12 +11,8 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
+import EditIcon from '@mui/icons-material/Edit';
 import { Post } from '../../types/post';
-import { DeletePost } from '../../graphql/mutations/deletePost';
-import { useBackdrop } from '../progress/BackdropProgress';
-import { useAppBar } from '../appBar/AppBar';
-import { toMessage } from '../../common/errors';
 import Dialog, { DialogConsumer } from '../dialog/Dialog';
 import DeletePostModal from '../deletePost/DeletePostModal';
 import AuthRequired from '../auth/AuthRequired';
@@ -27,28 +23,7 @@ interface PostCardProps {
 }
 
 const PostCard = (props: PostCardProps) => {
-	const { post, onPostDeleted = () => {} } = props;
-
-	const [deletePost] = useMutation(DeletePost);
-	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
-	const { open: openSnackbar } = useAppBar();
-
-	const deletePostHandler = async () => {
-		try {
-			openBackdrop();
-			await deletePost({
-				variables: {
-					id: post.id,
-				},
-			});
-			openSnackbar(`Post '${post.title}' deleted successfully`, 'success');
-			onPostDeleted();
-		} catch (err) {
-			openSnackbar(`Error on post '${post.title}' deletion. Details: ${toMessage(err)}`, 'error');
-		} finally {
-			closeBackdrop();
-		}
-	};
+	const { post, onPostDeleted } = props;
 
 	return (
 		<Card sx={{ display: 'flex', overflowY: 'hidden', flexDirection: 'column' }}>
@@ -73,7 +48,7 @@ const PostCard = (props: PostCardProps) => {
 						<Typography variant="body2" color="text.secondary">
 							{moment(post.createdDate).format('MMMM Do YYYY')}
 						</Typography>
-						<Typography variant="body1" paragraph sx={{ m: 4 }}>
+						<Typography variant="body1" paragraph>
 							{post.description}
 						</Typography>
 						<Typography variant="body1" color="primary">
@@ -83,10 +58,19 @@ const PostCard = (props: PostCardProps) => {
 				</CardActionArea>
 			</Link>
 			<AuthRequired>
-				<Dialog>
-					<DialogConsumer>
-						{({ open }) => (
-							<Box display="flex" alignItems="center" sx={{ pl: 1, pb: 1 }}>
+				<Box display="flex" alignItems="center" sx={{ pl: 1, pb: 1 }}>
+					<Link to={`/posts/edit/${post.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+						<IconButton
+							color="warning"
+							aria-label="edit"
+						>
+							<EditIcon />
+						</IconButton>
+					</Link>
+
+					<Dialog>
+						<DialogConsumer>
+							{({ open }) => (
 								<IconButton
 									color="error"
 									aria-label="delete"
@@ -97,12 +81,13 @@ const PostCard = (props: PostCardProps) => {
 								>
 									<DeleteIcon />
 								</IconButton>
-							</Box>
-						)}
-					</DialogConsumer>
+							)}
+						</DialogConsumer>
 
-					<DeletePostModal post={post} accept={deletePostHandler} />
-				</Dialog>
+						<DeletePostModal post={post} onPostDeleted={onPostDeleted} />
+					</Dialog>
+
+				</Box>
 			</AuthRequired>
 		</Card>
 	);

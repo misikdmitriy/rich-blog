@@ -1,5 +1,6 @@
-import { ObjectId } from 'mongodb';
+import { Filter, ObjectId } from 'mongodb';
 import { query } from '../../db';
+import { AppContext } from '../../types/app';
 import { PostDocument } from '../../types/post';
 
 const {
@@ -24,8 +25,9 @@ interface PostsArgs {
 const all = async (
 	_parent: unknown,
 	{ filter: filterArgs, pagination }: PostsArgs,
+	{ user }: AppContext,
 ) => {
-	const filter: Record<string, unknown> = {};
+	const filter: Filter<PostDocument> = {};
 
 	if (filterArgs?.id) {
 		filter._id = new ObjectId(filterArgs.id);
@@ -34,6 +36,8 @@ const all = async (
 	if (filterArgs?.shortUrl) {
 		filter.shortUrl = filterArgs.shortUrl;
 	}
+
+	filter.availableFor = { $in: [...new Set([...(user?.roles || []), 'user'])] };
 
 	const cursor = await query<PostDocument>(
 		POSTS_COLLECTION,

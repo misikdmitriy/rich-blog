@@ -5,9 +5,8 @@ import {
 	Typography,
 } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import { PostQuery } from '../../graphql/queries/post';
+import { PostByShortUrlQuery } from '../../graphql/queries/post';
 import { Post } from '../../types/post';
-import NotFound from '../notfound/NotFound';
 import { ContentBase } from '../../types/content';
 import ContentRoot from '../content/Content';
 import { useBackdrop } from '../progress/BackdropProgress';
@@ -25,7 +24,7 @@ const PostPage = () => {
 
 	const {
 		data, loading, error,
-	} = useQuery<{ posts: OptionalPostResult }>(PostQuery, {
+	} = useQuery<{ posts: OptionalPostResult }>(PostByShortUrlQuery, {
 		variables: {
 			shortUrl,
 		},
@@ -46,11 +45,6 @@ const PostPage = () => {
 	}, [error]);
 
 	const [post] = data?.posts?.posts || [];
-
-	if (!loading && !post && !error) {
-		return <NotFound />;
-	}
-
 	const content: ContentBase = JSON.parse(post?.content || '{}');
 
 	return (

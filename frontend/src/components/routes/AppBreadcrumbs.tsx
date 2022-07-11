@@ -1,7 +1,12 @@
 import { Breadcrumbs } from '@mui/material';
 import React from 'react';
 import {
-	Link, useLocation, matchPath, Location,
+	Link,
+	Location,
+	useLocation,
+	useParams,
+	matchPath,
+	generatePath,
 } from 'react-router-dom';
 import routes, { AppRoute, AppRouteWithChildren, hasChildren } from './routes';
 
@@ -33,7 +38,9 @@ const AppBreadcrumbs = (props: RenderBreadcrumbsElementProps) => {
 	const { children } = props;
 
 	const location = useLocation();
-	const path = buildPath(routes[0], location);
+	const params = useParams();
+	const path = buildPath(routes[0], location)
+		.map((route) => ({ ...route, path: generatePath(route.path, params) }));
 
 	return (
 		<>

@@ -7,19 +7,33 @@ import { Box, Button } from '@mui/material';
 import { CreatePostValues } from './types';
 import FormTextField from '../form/FormTextField';
 import ImageValidator from './ImageValidator';
+import { Post } from '../../types/post';
 
 const generateShortUrl = (title: string) => title.trim().replace(/[\s.,:?]+/g, '-').toLowerCase();
 
-const CreatePostForm = () => {
+interface CreatePostFormProps {
+	post?: Post
+}
+
+const CreatePostForm = (props: CreatePostFormProps) => {
+	const { post } = props;
+
 	const values = useFormikContext<CreatePostValues>();
 	const {
 		values: { title },
 		setFieldValue,
+		setValues,
 	} = values;
 
 	useEffect(() => {
 		setFieldValue('shortUrl', generateShortUrl(title));
 	}, [title]);
+
+	useEffect(() => {
+		if (post) {
+			setValues(post);
+		}
+	}, [post]);
 
 	return (
 		<Form style={{
@@ -54,10 +68,14 @@ const CreatePostForm = () => {
 				color="success"
 				type="submit"
 			>
-				Create
+				{post?.id ? 'Update' : 'Create'}
 			</Button>
 		</Form>
 	);
+};
+
+CreatePostForm.defaultProps = {
+	post: undefined,
 };
 
 export default CreatePostForm;

@@ -10,7 +10,10 @@ type Post {
     imageLabel: String!
     content: JsonObject!
     createdDate: DateTime!
+    updatedDate: DateTime
     createdBy: String!
+    updatedBy: String
+    availableFor: [String!]!
 }
 
 input CreatePostInput {
@@ -20,6 +23,16 @@ input CreatePostInput {
     image: String!
     imageLabel: String!
     content: JsonObject!
+}
+
+input UpdatePostInput {
+    shortUrl: String
+    title: String
+    description: String
+    image: String
+    imageLabel: String
+    content: JsonObject
+    availableToUsers: Boolean
 }
 
 input FilterPostsInput {
@@ -61,5 +74,6 @@ type Query {
 
 type Mutation {
     createPost(post: CreatePostInput!): Post!
+    updatePost(id: ID!, post: UpdatePostInput!): Post!
     deletePost(id: ID!): DeletePostResult!
 }
