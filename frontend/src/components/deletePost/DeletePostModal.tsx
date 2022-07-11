@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
 	Dialog,
 	DialogTitle,
@@ -11,9 +11,9 @@ import { useMutation } from '@apollo/client';
 import { Post } from '../../types/post';
 import { useDialog } from '../dialog/Dialog';
 import { DeletePost } from '../../graphql/mutations/deletePost';
-import { useBackdrop } from '../progress/BackdropProgress';
 import { useAppBar } from '../appBar/AppBar';
-import { toMessage } from '../../common/errors';
+import { useError } from '../../hooks/error';
+import { useLoading } from '../../hooks/loading';
 
 interface DeletePostModalProps {
     post: Post,
@@ -25,22 +25,10 @@ const DeletePostModal = (props: DeletePostModalProps) => {
 	const { isOpen: open, close } = useDialog();
 
 	const [deletePost, { loading, error }] = useMutation(DeletePost);
-	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
 	const { open: openSnackbar } = useAppBar();
 
-	useEffect(() => {
-		if (loading) {
-			openBackdrop();
-		} else {
-			closeBackdrop();
-		}
-	}, [loading]);
-
-	useEffect(() => {
-		if (error) {
-			openSnackbar(`Error on post '${post.title}' deletion. Details: ${toMessage(error)}`, 'error');
-		}
-	}, [error]);
+	useLoading(loading);
+	useError([error], (msg) => `Error on post '${post.title}' deletion. Details: ${msg}`);
 
 	const deletePostHandler = async () => {
 		close();

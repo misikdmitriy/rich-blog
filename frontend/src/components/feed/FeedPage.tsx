@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@apollo/client';
 import {
 	Button, CircularProgress, Grid, Box,
@@ -6,7 +6,7 @@ import {
 import { Post } from '../../types/post';
 import PostCard from '../post/PostCard';
 import { PostsQuery } from '../../graphql/queries/posts';
-import { useAppBar } from '../appBar/AppBar';
+import { useError } from '../../hooks/error';
 
 interface PostsResult {
 	posts: Post[],
@@ -33,14 +33,9 @@ const FeedPage = () => {
 		},
 	});
 
-	const { open: openSnackbar } = useAppBar();
 	const [isLoadingMore, setIsLoadingMore] = useState<boolean>(false);
 
-	useEffect(() => {
-		if (error) {
-			openSnackbar(error.message, 'error');
-		}
-	}, [error]);
+	useError([error]);
 
 	const loadMore = async () => {
 		setIsLoadingMore(true);

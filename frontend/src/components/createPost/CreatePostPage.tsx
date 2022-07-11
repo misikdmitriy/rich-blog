@@ -9,13 +9,12 @@ import {
 } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { CreatePostMutation } from '../../graphql/mutations/createPost';
-import { useBackdrop } from '../progress/BackdropProgress';
-import { useAppBar } from '../appBar/AppBar';
-import { toMessage } from '../../common/errors';
 import CreatePostForm from './CreatePostForm';
 import { Post } from '../../types/post';
 import { UpdatePostMutation } from '../../graphql/mutations/updatePost';
 import { PostByIdQuery } from '../../graphql/queries/post';
+import { useLoading } from '../../hooks/loading';
+import { useError } from '../../hooks/error';
 
 const schema = Yup.object().shape({
 	title: Yup.string().required(),
@@ -46,9 +45,6 @@ const CreatePostPage = () => {
 		error: updateError,
 	}] = useMutation(UpdatePostMutation);
 
-	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
-	const { open: openSnackbar } = useAppBar();
-
 	const [loadPost, {
 		data,
 		error: errorPost,
@@ -67,23 +63,8 @@ const CreatePostPage = () => {
 		}
 	}, [postId]);
 
-	const errorEffect = (error: unknown) => () => {
-		if (errorPost) {
-			openSnackbar(toMessage(error), 'error');
-		}
-	};
-
-	useEffect(errorEffect(errorPost), [errorPost]);
-	useEffect(errorEffect(createError), [createError]);
-	useEffect(errorEffect(updateError), [updateError]);
-
-	useEffect(() => {
-		if (loadingPost || createLoading || updateLoading) {
-			openBackdrop();
-		} else {
-			closeBackdrop();
-		}
-	}, [loadingPost, createLoading, updateLoading]);
+	useLoading(loadingPost, createLoading, updateLoading);
+	useError([errorPost, createError, updateError]);
 
 	return (
 		<Box

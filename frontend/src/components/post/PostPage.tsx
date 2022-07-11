@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useQuery } from '@apollo/client';
 import {
 	Box,
@@ -9,9 +9,8 @@ import { PostByShortUrlQuery } from '../../graphql/queries/post';
 import { Post } from '../../types/post';
 import { ContentBase } from '../../types/content';
 import ContentRoot from '../content/Content';
-import { useBackdrop } from '../progress/BackdropProgress';
-import { useAppBar } from '../appBar/AppBar';
-import { toMessage } from '../../common/errors';
+import { useLoading } from '../../hooks/loading';
+import { useError } from '../../hooks/error';
 
 interface OptionalPostResult {
     posts: [Post?]
@@ -19,8 +18,6 @@ interface OptionalPostResult {
 
 const PostPage = () => {
 	const { shortUrl } = useParams();
-	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
-	const { open: openSnackbar } = useAppBar();
 
 	const {
 		data, loading, error,
@@ -30,19 +27,8 @@ const PostPage = () => {
 		},
 	});
 
-	useEffect(() => {
-		if (loading) {
-			openBackdrop();
-		} else {
-			closeBackdrop();
-		}
-	}, [loading]);
-
-	useEffect(() => {
-		if (error) {
-			openSnackbar(toMessage(error), 'error');
-		}
-	}, [error]);
+	useLoading(loading);
+	useError([error]);
 
 	const [post] = data?.posts?.posts || [];
 	const content: ContentBase = JSON.parse(post?.content || '{}');
