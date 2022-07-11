@@ -3,4 +3,6 @@ export interface CreatePostValues {
 	shortUrl: string,
 	description: string,
 	content: string,
+	image: string,
+	imageLabel: string
 }

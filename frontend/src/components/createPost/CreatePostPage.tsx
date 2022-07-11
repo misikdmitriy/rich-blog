@@ -18,6 +18,11 @@ const schema = Yup.object().shape({
 	title: Yup.string().required(),
 	shortUrl: Yup.string().required(),
 	description: Yup.string().required(),
+	image: Yup.string().matches(
+		/^https?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_+.~#?&//=]*)$/,
+	).required(),
+	imageLabel: Yup.string().required(),
+	content: Yup.string().required(),
 });
 
 const CreatePostPage = () => {
@@ -48,6 +53,8 @@ const CreatePostPage = () => {
 						title: '',
 						shortUrl: '',
 						description: '',
+						image: '',
+						imageLabel: '',
 						content: '{}',
 					}}
 					validationSchema={schema}
@@ -57,8 +64,6 @@ const CreatePostPage = () => {
 							await createPost({
 								variables: {
 									...values,
-									image: 'ToDo: jpg',
-									imageLabel: 'ToDo: label',
 								},
 							});
 							navigate('/');

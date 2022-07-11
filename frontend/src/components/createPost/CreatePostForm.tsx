@@ -6,6 +6,7 @@ import {
 import { Box, Button } from '@mui/material';
 import { CreatePostValues } from './types';
 import FormTextField from '../form/FormTextField';
+import ImageValidator from './ImageValidator';
 
 const generateShortUrl = (title: string) => title.trim().replace(/[\s.,:?]+/g, '-').toLowerCase();
 
@@ -45,6 +46,15 @@ const CreatePostForm = () => {
 			</Box>
 			<FormTextField name="description" title="Description" values={values} multiline rows={2} />
 			<FormTextField name="content" title="Content" values={values} multiline rows={4} />
+			<Box sx={{
+				display: 'flex',
+				flexDirection: 'row',
+			}}
+			>
+				<FormTextField name="image" title="Image" values={values} />
+				<ImageValidator image={values.values.image} />
+			</Box>
+			<FormTextField name="imageLabel" title="Image ALT" values={values} />
 			<Button
 				sx={{ m: 1 }}
 				variant="outlined"
