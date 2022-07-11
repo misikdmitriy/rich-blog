@@ -29,11 +29,7 @@ const CreatePostForm = () => {
 		}}
 		>
 			<FormTextField name="title" title="Title" values={values} />
-			<Box sx={{
-				display: 'flex',
-				flexDirection: 'row',
-			}}
-			>
+			<Box display="flex" sx={{ flexDirection: 'row' }}>
 				<FormTextField name="shortUrl" title="Short URL" values={values} />
 				<Button
 					sx={{ m: 3 }}
@@ -46,11 +42,7 @@ const CreatePostForm = () => {
 			</Box>
 			<FormTextField name="description" title="Description" values={values} multiline rows={2} />
 			<FormTextField name="content" title="Content" values={values} multiline rows={4} />
-			<Box sx={{
-				display: 'flex',
-				flexDirection: 'row',
-			}}
-			>
+			<Box display="flex" sx={{ flexDirection: 'row' }}>
 				<FormTextField name="image" title="Image" values={values} />
 				<ImageValidator image={values.values.image} />
 			</Box>

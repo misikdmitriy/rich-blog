@@ -33,13 +33,13 @@ const CreatePostPage = () => {
 
 	return (
 		<Box
-			sx={{ display: 'flex' }}
+			display="flex"
 			alignItems="center"
 			justifyContent="center"
 		>
 			<Box
+				display="flex"
 				sx={{
-					display: 'flex',
 					width: {
 						sx: 'auto',
 						md: '50vw',

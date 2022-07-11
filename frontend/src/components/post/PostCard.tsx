@@ -13,13 +13,13 @@ import moment from 'moment';
 import { Link } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
 import { Post } from '../../types/post';
-import { useAuth } from '../auth/Auth';
 import { DeletePost } from '../../graphql/mutations/deletePost';
 import { useBackdrop } from '../progress/BackdropProgress';
 import { useAppBar } from '../appBar/AppBar';
 import { toMessage } from '../../common/errors';
 import Dialog, { DialogConsumer } from '../dialog/Dialog';
 import DeletePostModal from '../deletePost/DeletePostModal';
+import AuthRequired from '../auth/AuthRequired';
 
 interface PostCardProps {
 	post: Post;
@@ -29,21 +29,9 @@ interface PostCardProps {
 const PostCard = (props: PostCardProps) => {
 	const { post, onPostDeleted = () => {} } = props;
 
-	const auth = useAuth();
 	const [deletePost] = useMutation(DeletePost);
 	const { open: openBackdrop, close: closeBackdrop } = useBackdrop();
 	const { open: openSnackbar } = useAppBar();
-
-	const {
-		data: {
-			me = {
-				isAuthenticated: false,
-			},
-		} = {},
-	} = auth || {};
-
-	const { user } = me;
-	const isAdmin = () => user?.roles.includes('admin');
 
 	const deletePostHandler = async () => {
 		try {
@@ -94,15 +82,11 @@ const PostCard = (props: PostCardProps) => {
 					</CardContent>
 				</CardActionArea>
 			</Link>
-
-			{isAdmin() && (
+			<AuthRequired>
 				<Dialog>
 					<DialogConsumer>
 						{({ open }) => (
-							<Box sx={{
-								display: 'flex', alignItems: 'center', pl: 1, pb: 1,
-							}}
-							>
+							<Box display="flex" alignItems="center" sx={{ pl: 1, pb: 1 }}>
 								<IconButton
 									color="error"
 									aria-label="delete"
@@ -119,7 +103,7 @@ const PostCard = (props: PostCardProps) => {
 
 					<DeletePostModal post={post} accept={deletePostHandler} />
 				</Dialog>
-			)}
+			</AuthRequired>
 		</Card>
 	);
 };

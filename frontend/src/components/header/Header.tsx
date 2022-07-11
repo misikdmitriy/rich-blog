@@ -9,8 +9,9 @@ import {
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
 import LoginDialog from '../login/LoginDialog';
-import { useAuth } from '../auth/Auth';
 import Dialog, { DialogConsumer } from '../dialog/Dialog';
+import AuthRequired from '../auth/AuthRequired';
+import NoAuth from '../auth/NoAuth';
 
 interface HeaderProps {
   title: string;
@@ -18,21 +19,6 @@ interface HeaderProps {
 
 const Header = (props: HeaderProps) => {
 	const { title } = props;
-
-	const auth = useAuth();
-
-	const {
-		data: {
-			me = {
-				isAuthenticated: false,
-			},
-		} = {},
-		loading,
-	} = auth || {};
-
-	const { isAuthenticated, user } = me;
-
-	const isAdmin = () => user && user.roles && user.roles.indexOf('admin') > -1;
 
 	return (
 		<Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -46,8 +32,8 @@ const Header = (props: HeaderProps) => {
 			>
 				{title}
 			</Typography>
-			<Box>
-				{isAdmin() && (
+			<Box display="flex" sx={{ flexDirection: 'row' }}>
+				<AuthRequired authRole="admin">
 					<Link
 						to="/posts/create"
 						style={{ textDecoration: 'none' }}
@@ -62,9 +48,8 @@ const Header = (props: HeaderProps) => {
 							Post
 						</Button>
 					</Link>
-
-				)}
-				{!loading && !isAuthenticated && (
+				</AuthRequired>
+				<NoAuth>
 					<Dialog>
 						<DialogConsumer>
 							{({ open }) => (
@@ -81,8 +66,8 @@ const Header = (props: HeaderProps) => {
 						</DialogConsumer>
 						<LoginDialog title="Sign In" />
 					</Dialog>
-				)}
-				{!loading && isAuthenticated && (
+				</NoAuth>
+				<AuthRequired>
 					<OutsideLink
 						href={`/api/v1/auth/logout?returnTo=${window.location.href}`}
 						sx={{ textDecoration: 'none' }}
@@ -96,7 +81,7 @@ const Header = (props: HeaderProps) => {
 							Sign Out
 						</Button>
 					</OutsideLink>
-				)}
+				</AuthRequired>
 			</Box>
 		</Toolbar>
 	);
