@@ -25,20 +25,14 @@ const create = async (
 	_parent: unknown,
 	{
 		id,
-		post: {
-			shortUrl, title, content, description, image, imageLabel, availableToUsers,
-		},
+		post: { content, availableToUsers, ...other },
 	}: { id: string, post: UpdateInput },
 	context: AppContext,
 ) => {
 	requireAuth(context, 'admin');
 
 	const post: Partial<PostNoContent> = {
-		title,
-		shortUrl,
-		description,
-		image,
-		imageLabel,
+		...other,
 		updatedDate: new Date(),
 		updatedBy: context.user!.id,
 	};
@@ -49,21 +43,25 @@ const create = async (
 
 	const result = await findOneAndUpdate(POSTS_COLLECTION, post, { _id: new ObjectId(id) });
 
-	if (!result.ok || !result.value) {
+	if (!result.ok) {
 		throw new Error('error on update');
 	}
 
-	const s3Response = await putObject(
-		CONTENT_BUCKET,
-		getKeyByPostId(result.value!._id),
-		JSON.stringify(content),
-	);
+	if (result.value && content) {
+		const s3Response = await putObject(
+			CONTENT_BUCKET,
+			getKeyByPostId(result.value!._id),
+			JSON.stringify(content),
+		);
 
-	if (s3Response.$response.error) {
-		throw new Error('error on content update');
+		if (s3Response.$response.error) {
+			throw new Error('error on content update');
+		}
 	}
 
-	return { id: result.value!._id, ...post };
+	return result.value
+		? { success: true, post: { id: result.value!._id, ...post } }
+		: { success: false };
 };
 
 export default create;

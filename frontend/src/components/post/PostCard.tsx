@@ -12,18 +12,21 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import moment from 'moment';
 import { Link } from 'react-router-dom';
 import EditIcon from '@mui/icons-material/Edit';
+import KeyIcon from '@mui/icons-material/Key';
 import { Post } from '../../types/post';
 import Dialog, { DialogConsumer } from '../dialog/Dialog';
 import DeletePostModal from '../deletePost/DeletePostModal';
 import AuthRequired from '../auth/AuthRequired';
+import UnlockPostModal from '../unlockPost/UnlockPostModal';
 
 interface PostCardProps {
 	post: Post;
 	onPostDeleted?: () => void
+	onPostUnlocked?: () => void
 }
 
 const PostCard = (props: PostCardProps) => {
-	const { post, onPostDeleted } = props;
+	const { post, onPostDeleted, onPostUnlocked } = props;
 
 	return (
 		<Card sx={{ display: 'flex', overflowY: 'hidden', flexDirection: 'column' }}>
@@ -59,6 +62,27 @@ const PostCard = (props: PostCardProps) => {
 			</Link>
 			<AuthRequired>
 				<Box display="flex" alignItems="center" sx={{ pl: 1, pb: 1 }}>
+					{!post.availableFor.includes('user') && (
+						<Dialog>
+							<DialogConsumer>
+								{({ open }) => (
+									<IconButton
+										color="success"
+										aria-label="unlock"
+										onClick={(event) => {
+											event.stopPropagation();
+											open();
+										}}
+									>
+										<KeyIcon />
+									</IconButton>
+								)}
+							</DialogConsumer>
+
+							<UnlockPostModal post={post} onPostUnlocked={onPostUnlocked} />
+						</Dialog>
+					)}
+
 					<Link to={`/posts/edit/${post.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
 						<IconButton
 							color="warning"
@@ -95,6 +119,7 @@ const PostCard = (props: PostCardProps) => {
 
 PostCard.defaultProps = {
 	onPostDeleted: () => {},
+	onPostUnlocked: () => {},
 };
 
 export default PostCard;

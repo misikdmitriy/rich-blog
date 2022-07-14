@@ -20,3 +20,9 @@ export type TypographyContent = ContentBase & Record<string, unknown> & {
     variant: Variant,
     content: NonEmptyArray<ContentBase>
 };
+
+export type ImageContent = ContentBase & Record<string, unknown> & {
+    type: 'image',
+    src: string,
+    alt: string,
+};

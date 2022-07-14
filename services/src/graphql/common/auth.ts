@@ -1,11 +1,22 @@
 import { AppContext } from '../../types/app';
 import { AppRole } from '../../types/users';
 
+const {
+	ALLOW_ANONYMOUS,
+} = process.env;
+
+const allowAnonymous = ALLOW_ANONYMOUS === 'true';
+
 export const requireAuth = (
 	{ user, isAuthenticated }: AppContext,
 	requiredRole: AppRole,
 	...roles: AppRole[]
 ) => {
+	if (allowAnonymous) {
+		// skip validation
+		return;
+	}
+
 	const allRoles = [requiredRole, ...roles];
 
 	if (!isAuthenticated) {

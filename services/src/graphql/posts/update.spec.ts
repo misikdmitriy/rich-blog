@@ -69,7 +69,7 @@ describe('update', () => {
 		);
 
 		// assert
-		expect(result).toMatchObject({ id });
+		expect(result).toMatchObject({ success: true, post: expect.objectContaining({ id }) });
 		expect(requireAuth).toBeCalledTimes(1);
 
 		// mongo
@@ -93,6 +93,31 @@ describe('update', () => {
 			id,
 			JSON.stringify(post.content),
 		);
+	});
+
+	it('should update only in db if no content provided', async () => {
+		// arrange
+		mockReturnValueOnce(findOneAndUpdate, mongoResult);
+
+		// act
+		const result = await update(
+			undefined,
+			{
+				id,
+				post: {},
+			},
+			{ isAuthenticated: true, user },
+		);
+
+		// assert
+		expect(result).toMatchObject({ success: true, post: expect.objectContaining({ id }) });
+		expect(requireAuth).toBeCalledTimes(1);
+
+		// mongo
+		expect(findOneAndUpdate).toBeCalledTimes(1);
+
+		// s3
+		expect(putObject).toBeCalledTimes(0);
 	});
 
 	it('should make available for users', async () => {
@@ -120,12 +145,9 @@ describe('update', () => {
 		expect(putObject).toBeCalledTimes(1);
 	});
 
-	it.each([
-		[{ ok: false }],
-		[{ value: false }],
-	])('should stop after failed db update %s', async (mongoFailedResult) => {
+	it('should stop after failed db update', async () => {
 		// arrange
-		mockReturnValueOnce(findOneAndUpdate, mongoFailedResult);
+		mockReturnValueOnce(findOneAndUpdate, { ok: false });
 
 		// act
 		await expect(() => update(
@@ -137,6 +159,27 @@ describe('update', () => {
 			.toThrow('error on update');
 
 		// assert
+		// mongo
+		expect(findOneAndUpdate).toBeCalledTimes(1);
+
+		// s3
+		expect(putObject).toBeCalledTimes(0);
+	});
+
+	it('should return unsuccessful result if there is nothing in db', async () => {
+		// arrange
+		mockReturnValueOnce(findOneAndUpdate, { ok: true, value: undefined });
+
+		// act
+		const result = await update(
+			undefined,
+			{ id, post },
+			{ isAuthenticated: true, user },
+		);
+
+		// assert
+		expect(result).toMatchObject({ success: false });
+
 		// mongo
 		expect(findOneAndUpdate).toBeCalledTimes(1);
 

@@ -48,7 +48,7 @@ const all = async (
 
 	const fetchCursor = cursor.sort({ createdDate: -1 })
 		.skip(skip)
-		.limit(take)
+		.limit(take > 100 ? 100 : take)
 		.map((doc) => ({
 			id: doc._id,
 			...doc,

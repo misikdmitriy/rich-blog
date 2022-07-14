@@ -11,6 +11,7 @@ export const PostsQuery = gql`
                 image
                 imageLabel
                 createdDate
+                availableFor
             }
             hasNext
         }

@@ -67,6 +67,11 @@ type DeletePostResult {
     success: Boolean!
 }
 
+type UpdatePostResult {
+    success: Int!
+    post: Post
+}
+
 type Query {
     me: AuthResult!
     posts(filter: FilterPostsInput, pagination: PaginationInput): PostResult!
@@ -74,6 +79,6 @@ type Query {
 
 type Mutation {
     createPost(post: CreatePostInput!): Post!
-    updatePost(id: ID!, post: UpdatePostInput!): Post!
+    updatePost(id: ID!, post: UpdatePostInput!): UpdatePostResult!
     deletePost(id: ID!): DeletePostResult!
 }

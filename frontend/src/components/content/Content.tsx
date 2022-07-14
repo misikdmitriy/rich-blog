@@ -3,6 +3,7 @@ import { Box, Typography as MuiTypography } from '@mui/material';
 import {
 	ContainerContent,
 	ContentBase,
+	ImageContent,
 	TextContent,
 	TypographyContent,
 } from '../../types/content';
@@ -30,13 +31,18 @@ const Typography = (props: ContentProps<TypographyContent>) => {
 };
 
 const Container = (props: ContentProps<ContainerContent>) => {
-	const { content: { content }, ...other } = props;
+	const { content: { content, ...other } } = props;
 
 	return (
 		<Box {...other}>
 			{content.map(contentMapper)}
 		</Box>
 	);
+};
+
+const Image = (props: ContentProps<ImageContent>) => {
+	const { content: { src, alt, ...other } } = props;
+	return <img src={src} alt={alt} {...other} />;
 };
 
 const ContentRoot = (props: ContentProps) => {
@@ -50,6 +56,9 @@ const ContentRoot = (props: ContentProps) => {
 	}
 	if (content.type === 'typography') {
 		return <Typography content={content as TypographyContent} />;
+	}
+	if (content.type === 'image') {
+		return <Image content={content as ImageContent} />;
 	}
 
 	return null;

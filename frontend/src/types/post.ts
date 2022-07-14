@@ -7,6 +7,7 @@ export interface Post {
 	imageLabel: string
 	content: string
 	createdDate: Date
+	availableFor: string[]
 }
 
 export interface PostContent {

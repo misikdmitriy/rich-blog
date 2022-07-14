@@ -67,6 +67,11 @@ describe('all', () => {
 			{ take: 15 },
 		],
 		[
+			6,
+			undefined,
+			{ take: 500 },
+		],
+		[
 			7,
 			undefined,
 			{ skip: 20 },
@@ -111,7 +116,8 @@ describe('all', () => {
 			expect(skip).toBeCalledWith(pagination?.skip || 0);
 
 			expect(limit).toBeCalledTimes(1);
-			expect(limit).toBeCalledWith(pagination?.take || 10);
+			const take = pagination?.take || 10;
+			expect(limit).toBeCalledWith(take > 100 ? 100 : take);
 
 			expect(map).toBeCalledTimes(1);
 

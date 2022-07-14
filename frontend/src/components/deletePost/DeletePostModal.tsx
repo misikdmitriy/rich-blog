@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
 	Dialog,
 	DialogTitle,
@@ -20,27 +20,41 @@ interface DeletePostModalProps {
     onPostDeleted?: () => void
 }
 
+interface DeletePostResult {
+	success: boolean
+}
+
 const DeletePostModal = (props: DeletePostModalProps) => {
 	const { post, onPostDeleted = () => {} } = props;
 	const { isOpen: open, close } = useDialog();
 
-	const [deletePost, { loading, error }] = useMutation(DeletePost);
+	const [deletePost,
+		{ data, loading, error }] = useMutation<{deletePost: DeletePostResult}>(DeletePost);
+
 	const { open: openSnackbar } = useAppBar();
+
+	useEffect(() => {
+		if (data && data.deletePost) {
+			if (data.deletePost.success) {
+				openSnackbar(`Post '${post.title}' deleted successfully`, 'success');
+				onPostDeleted();
+			} else {
+				openSnackbar(`Post '${post.title}' was not deleted`, 'warning');
+			}
+		}
+	}, [data]);
 
 	useLoading(loading);
 	useError([error], (msg) => `Error on post '${post.title}' deletion. Details: ${msg}`);
 
-	const deletePostHandler = async () => {
+	const deletePostHandler = () => {
 		close();
 
-		await deletePost({
+		return deletePost({
 			variables: {
 				id: post.id,
 			},
 		});
-
-		openSnackbar(`Post '${post.title}' deleted successfully`, 'success');
-		onPostDeleted();
 	};
 
 	return (

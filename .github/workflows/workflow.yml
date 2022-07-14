@@ -5,13 +5,12 @@ name: Rich Blog CI
 
 on:
   push:
-    branches: [master]
+    branches: 
+      - '*'
 
 env:
   FE_PATH: frontend
   BE_PATH: services
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   build_be:
@@ -36,8 +35,8 @@ jobs:
           cache-dependency-path: ./${{ env.BE_PATH }}/package-lock.json
       - run: npm install
       - run: npm run lint
-      - run: npm run build
       - run: npm test
+      - run: npm run build
 
   build_fe:
     runs-on: ubuntu-latest
@@ -61,5 +60,5 @@ jobs:
           cache-dependency-path: ./${{ env.FE_PATH }}/package-lock.json
       - run: npm install
       - run: npm run lint
-      - run: npm run build
       - run: npm test
+      - run: npm run build

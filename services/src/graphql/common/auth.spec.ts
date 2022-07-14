@@ -1,8 +1,14 @@
+/* eslint global-require: 0 */
+
 import { faker } from '@faker-js/faker';
 import { AppUser } from '../../types/users';
-import { requireAuth } from './auth';
 
 describe('requireAuth', () => {
+	beforeEach(() => {
+		jest.resetModules();
+		process.env.ALLOW_ANONYMOUS = 'false';
+	});
+
 	it('should check and pass', () => {
 		// arrange
 		const isAuthenticated = true;
@@ -14,7 +20,10 @@ describe('requireAuth', () => {
 			email: faker.internet.email(),
 		};
 
+		const { requireAuth } = require('./auth');
+
 		// act
+		// assert
 		expect(() => requireAuth({ isAuthenticated, user }, 'admin'))
 			.not
 			.toThrow();
@@ -31,7 +40,10 @@ describe('requireAuth', () => {
 			email: faker.internet.email(),
 		};
 
+		const { requireAuth } = require('./auth');
+
 		// act
+		// assert
 		expect(() => requireAuth({ isAuthenticated, user }, 'admin'))
 			.toThrow('authentication required');
 	});
@@ -47,7 +59,10 @@ describe('requireAuth', () => {
 			email: faker.internet.email(),
 		};
 
+		const { requireAuth } = require('./auth');
+
 		// act
+		// assert
 		expect(() => requireAuth({ isAuthenticated, user }, 'admin'))
 			.toThrow('at least one role required: \'admin\'');
 	});
@@ -63,7 +78,10 @@ describe('requireAuth', () => {
 			email: faker.internet.email(),
 		};
 
+		const { requireAuth } = require('./auth');
+
 		// act
+		// assert
 		expect(() => requireAuth({ isAuthenticated, user }, 'user', 'admin'))
 			.not
 			.toThrow();
@@ -80,8 +98,24 @@ describe('requireAuth', () => {
 			email: faker.internet.email(),
 		};
 
+		const { requireAuth } = require('./auth');
+
 		// act
+		// assert
 		expect(() => requireAuth({ isAuthenticated, user }, 'user', 'admin'))
 			.toThrow('at least one role required: \'user, admin\'');
+	});
+
+	it('should skip validation if env variable set to true', () => {
+		// arrange
+		process.env.ALLOW_ANONYMOUS = 'true';
+
+		const { requireAuth } = require('./auth');
+
+		// act
+		// assert
+		expect(() => requireAuth({ isAuthenticated: false }, 'admin'))
+			.not
+			.toThrow();
 	});
 });

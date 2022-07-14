@@ -42,6 +42,21 @@ describe('content', () => {
 		expect(getObject).toBeCalledWith('', id.toString());
 	});
 
+	test('should return nothing if no body', async () => {
+		// arrange
+		const id = new ObjectId(faker.database.mongodbObjectId());
+		mockReturnValueOnce(getObject, Promise.resolve({
+			$response: {},
+		}));
+
+		// act
+		const result = await content({ id });
+
+		// assert
+		expect(result).toBe(undefined);
+		expect(getObject).toBeCalledTimes(1);
+	});
+
 	test('should throw error', async () => {
 		// arrange
 		const id = new ObjectId(faker.database.mongodbObjectId());

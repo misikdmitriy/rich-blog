@@ -63,13 +63,19 @@ const FeedPage = () => {
 	};
 
 	const onPostDelete = () => refetch();
+	const onPostUnlocked = () => refetch();
 
 	return (
 		<>
 			<Grid container spacing={6}>
 				{posts?.map((post) => (
 					<Grid key={`grid-${post.shortUrl}`} item xs={12} md={4}>
-						<PostCard key={post.shortUrl} post={post} onPostDeleted={onPostDelete} />
+						<PostCard
+							key={post.shortUrl}
+							post={post}
+							onPostDeleted={onPostDelete}
+							onPostUnlocked={onPostUnlocked}
+						/>
 					</Grid>
 				))}
 			</Grid>
