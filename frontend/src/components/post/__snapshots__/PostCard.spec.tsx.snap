@@ -1,0 +1,70 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`PostCard renders without crashing 1`] = `
+<div
+  className="MuiPaper-root MuiPaper-elevation MuiPaper-rounded MuiPaper-elevation1 MuiCard-root css-ysuk8h-MuiPaper-root-MuiCard-root"
+>
+  <a
+    href="/posts/id//short-url"
+    onClick={[Function]}
+    style={
+      Object {
+        "color": "inherit",
+        "textDecoration": "none",
+      }
+    }
+  >
+    <button
+      className="MuiButtonBase-root MuiCardActionArea-root css-b6lsxj-MuiButtonBase-root-MuiCardActionArea-root"
+      disabled={false}
+      onBlur={[Function]}
+      onContextMenu={[Function]}
+      onDragLeave={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      onMouseLeave={[Function]}
+      onMouseUp={[Function]}
+      onTouchEnd={[Function]}
+      onTouchMove={[Function]}
+      onTouchStart={[Function]}
+      tabIndex={0}
+      type="button"
+    >
+      <img
+        alt="image alt"
+        className="MuiCardMedia-root MuiCardMedia-media MuiCardMedia-img css-q0pqgy-MuiCardMedia-root"
+        src="http://image.com/jpg"
+      />
+      <div
+        className="MuiCardContent-root css-46bh2p-MuiCardContent-root"
+      >
+        <h3
+          className="MuiTypography-root MuiTypography-h4 css-5lbw0b-MuiTypography-root"
+        >
+          Random Title
+        </h3>
+        <p
+          className="MuiTypography-root MuiTypography-body2 css-r40f8v-MuiTypography-root"
+        >
+          December 25th 1995
+        </p>
+        <p
+          className="MuiTypography-root MuiTypography-body1 MuiTypography-paragraph css-z2eky3-MuiTypography-root"
+        >
+          Some description
+        </p>
+        <p
+          className="MuiTypography-root MuiTypography-body1 css-vkc4v8-MuiTypography-root"
+        >
+          Continue reading...
+        </p>
+      </div>
+      <span
+        className="MuiCardActionArea-focusHighlight css-1v2exvi-MuiCardActionArea-focusHighlight"
+      />
+    </button>
+  </a>
+</div>
+`;
