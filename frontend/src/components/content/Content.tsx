@@ -6,18 +6,21 @@ import {
 	ImageContent,
 	TextContent,
 	TypographyContent,
+	HtmlContent,
+	AccordionContent,
 } from '../../types/content';
+import AccordionComponent from '../accordion/Accordion';
 
 interface ContentProps<TContentType extends ContentBase = ContentBase> {
     content: TContentType
 }
 
 // eslint-disable-next-line no-use-before-define
-const contentMapper = (content: ContentBase) => <ContentRoot content={content} />;
+const contentMapper = (content: ContentBase) => <ContentRoot key={content.key} content={content} />;
 
 const Text = (props: ContentProps<TextContent>) => {
-	const { content } = props;
-	return <span>{content.text}</span>;
+	const { content, ...other } = props;
+	return <span {...other}>{content.text}</span>;
 };
 
 const Typography = (props: ContentProps<TypographyContent>) => {
@@ -45,6 +48,26 @@ const Image = (props: ContentProps<ImageContent>) => {
 	return <img src={src} alt={alt} {...other} />;
 };
 
+const Html = (props: ContentProps<HtmlContent>) => {
+	const { content: { html, ...other } } = props;
+	// eslint-disable-next-line react/no-danger
+	return <div dangerouslySetInnerHTML={{ __html: html }} {...other} />;
+};
+
+const Accordion = (props: ContentProps<AccordionContent>) => {
+	const { content: { content, ...other } } = props;
+	return (
+		<AccordionComponent
+			articles={content.map(({ key, title, content: ctnt }) => ({
+				key,
+				title: contentMapper(title),
+				content: contentMapper(ctnt),
+			}))}
+			{...other}
+		/>
+	);
+};
+
 const ContentRoot = (props: ContentProps) => {
 	const { content } = props;
 
@@ -59,6 +82,12 @@ const ContentRoot = (props: ContentProps) => {
 	}
 	if (content.type === 'image') {
 		return <Image content={content as ImageContent} />;
+	}
+	if (content.type === 'html') {
+		return <Html content={content as HtmlContent} />;
+	}
+	if (content.type === 'accordion') {
+		return <Accordion content={content as AccordionContent} />;
 	}
 
 	return null;

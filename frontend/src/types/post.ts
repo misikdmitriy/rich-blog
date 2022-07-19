@@ -6,7 +6,7 @@ export interface Post {
 	image: string
 	imageLabel: string
 	content: string
-	createdDate: Date
+	createdDate: string
 	availableFor: string[]
 }
 

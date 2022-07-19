@@ -11,7 +11,6 @@ export default {
 	Mutation: {
 		...Posts.mutations,
 	},
-	Post: Posts.Post,
 	DateTime,
 	JsonObject,
 };

@@ -23,7 +23,6 @@ const {
 
 	const app = express();
 
-	app.use(express.static('public'));
 	app.use(express.json());
 	app.use(session({
 		resave: false,
@@ -40,6 +39,9 @@ const {
 	app.use(passport.session());
 
 	api(app);
+
+	app.use('/locales', express.static('locales'));
+	app.use(express.static('public'));
 
 	passport.serializeUser((user, cb) => cb(null, user));
 	passport.deserializeUser((obj, cb) => cb(null, obj as AppUser));

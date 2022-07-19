@@ -13,7 +13,7 @@ describe('PostCard', () => {
 		image: 'http://image.com/jpg',
 		imageLabel: 'image alt',
 		content: '{}',
-		createdDate: new Date(Date.parse('Dec 25, 1995')),
+		createdDate: 'Dec 25, 1995',
 		availableFor: ['user'],
 	};
 

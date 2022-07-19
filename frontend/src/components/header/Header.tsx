@@ -8,6 +8,7 @@ import {
 } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import LoginDialog from '../login/LoginDialog';
 import Dialog, { DialogConsumer } from '../dialog/Dialog';
 import AuthRequired from '../auth/AuthRequired';
@@ -19,6 +20,8 @@ interface HeaderProps {
 
 const Header = (props: HeaderProps) => {
 	const { title } = props;
+
+	const { t } = useTranslation();
 
 	return (
 		<Toolbar sx={{ borderBottom: 1, borderColor: 'divider' }}>
@@ -45,7 +48,7 @@ const Header = (props: HeaderProps) => {
 							startIcon={<AddIcon />}
 							color="success"
 						>
-							Post
+							{t('addPost')}
 						</Button>
 					</Link>
 				</AuthRequired>
@@ -60,11 +63,11 @@ const Header = (props: HeaderProps) => {
 									onClick={open}
 									color="info"
 								>
-									Sign In
+									{t('signIn')}
 								</Button>
 							)}
 						</DialogConsumer>
-						<LoginDialog title="Sign In" />
+						<LoginDialog title={t('signIn')} />
 					</Dialog>
 				</NoAuth>
 				<AuthRequired>
@@ -78,7 +81,7 @@ const Header = (props: HeaderProps) => {
 							size="small"
 							color="error"
 						>
-							Sign Out
+							{t('signOut')}
 						</Button>
 					</OutsideLink>
 				</AuthRequired>

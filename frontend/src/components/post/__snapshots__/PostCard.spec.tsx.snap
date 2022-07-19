@@ -48,7 +48,7 @@ exports[`PostCard renders without crashing 1`] = `
         <p
           className="MuiTypography-root MuiTypography-body2 css-r40f8v-MuiTypography-root"
         >
-          December 25th 1995
+          December 25, 1995
         </p>
         <p
           className="MuiTypography-root MuiTypography-body1 MuiTypography-paragraph css-z2eky3-MuiTypography-root"
@@ -58,7 +58,8 @@ exports[`PostCard renders without crashing 1`] = `
         <p
           className="MuiTypography-root MuiTypography-body1 css-vkc4v8-MuiTypography-root"
         >
-          Continue reading...
+          continueRead
+          ...
         </p>
       </div>
       <span

@@ -7,25 +7,21 @@ import {
 	InMemoryCache,
 	ApolloProvider,
 } from '@apollo/client';
+import {
+	indigo, teal, red, deepOrange,
+} from '@mui/material/colors';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import './styles/index.scss';
 import { PostsResponse } from './types/post';
+import './i18n';
 
 const theme = createTheme({
 	palette: {
-		primary: {
-			light: '#ff795f',
-			main: '#f44336',
-			dark: '#b9000a',
-			contrastText: '#fff',
-		},
-		secondary: {
-			light: '#ff7961',
-			main: '#f44336',
-			dark: '#ba000d',
-			contrastText: '#000',
-		},
+		primary: red,
+		secondary: deepOrange,
+		success: teal,
+		info: indigo,
 	},
 	typography: {
 		fontFamily: [

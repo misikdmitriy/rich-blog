@@ -4,13 +4,17 @@ const JSONScalar = new GraphQLScalarType({
 	name: 'JSON',
 	description: 'Should be a valid JSON.',
 	serialize(value: unknown): string {
-		if (typeof value !== 'string') {
-			throw new TypeError('Cannot serialize JSON from non-string');
+		if (typeof value === 'string') {
+			// just to check it can be done
+			JSON.parse(value);
+			return value;
 		}
 
-		// just to check it can be done
-		JSON.parse(value);
-		return value;
+		if (typeof value === 'object' && value !== null) {
+			return JSON.stringify(value);
+		}
+
+		throw new TypeError('Cannot serialize JSON from non-string/non-object');
 	},
 	parseValue(value: unknown) {
 		if (typeof value !== 'string') {

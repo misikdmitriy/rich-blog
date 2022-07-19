@@ -1,6 +1,9 @@
 import React from 'react';
-import { Box, Container, Typography } from '@mui/material';
+import {
+	Box, Button, Container, Typography,
+} from '@mui/material';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 const Copyright = () => (
 	<Typography variant="body2" color="text.secondary" align="center">

@@ -1,9 +1,7 @@
-import { putObject } from '../../aws/s3';
 import { insert } from '../../db';
 import { AppContext } from '../../types/app';
-import { PostNoContent } from '../../types/post';
+import { Post } from '../../types/post';
 import { requireAuth } from '../common/auth';
-import { getKeyByPostId } from './common';
 
 interface CreateInput {
 	shortUrl: string,
@@ -16,7 +14,6 @@ interface CreateInput {
 
 const {
 	POSTS_COLLECTION = 'posts',
-	CONTENT_BUCKET = '',
 } = process.env;
 
 const create = async (
@@ -30,10 +27,11 @@ const create = async (
 ) => {
 	requireAuth(context, 'admin');
 
-	const post: PostNoContent = {
+	const post: Post = {
 		title,
 		shortUrl,
 		description,
+		content,
 		image,
 		imageLabel,
 		createdDate: new Date(),
@@ -45,16 +43,6 @@ const create = async (
 
 	if (!result.acknowledged || !result.insertedId) {
 		throw new Error('error on save');
-	}
-
-	const s3Response = await putObject(
-		CONTENT_BUCKET,
-		getKeyByPostId(result.insertedId),
-		JSON.stringify(content),
-	);
-
-	if (s3Response.$response.error) {
-		throw new Error('error on content save');
 	}
 
 	return { id: result.insertedId, ...post };

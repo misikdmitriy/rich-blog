@@ -5,19 +5,10 @@ import create from './create';
 import { AppUser } from '../../types/users';
 import { insert } from '../../db';
 import { mockImplementationOnce, mockReturnValueOnce } from '../../tests/common';
-import { putObject } from '../../aws/s3';
 import { requireAuth } from '../common/auth';
 
 jest.mock('../../db', () => ({
 	insert: jest.fn(),
-}));
-
-jest.mock('../../aws/s3', () => ({
-	putObject: jest.fn(),
-}));
-
-jest.mock('./common', () => ({
-	getKeyByPostId: (id: string | ObjectId) => id.toString(),
 }));
 
 jest.mock('../common/auth', () => ({
@@ -47,18 +38,12 @@ describe('create', () => {
 		insertedId: new ObjectId(faker.database.mongodbObjectId()),
 	};
 
-	const s3Response = {
-		$response: {
-			error: undefined,
-		},
-	};
-
-	test('should insert to db & put in s3', async () => {
+	test('should insert to db', async () => {
 		// arrange
 		mockReturnValueOnce(insert, Promise.resolve(mongoResult));
-		mockReturnValueOnce(putObject, Promise.resolve(s3Response));
 
 		const mongoInsertArg = {
+			content: post.content,
 			shortUrl: post.shortUrl,
 			title: post.title,
 			description: post.description,
@@ -84,14 +69,6 @@ describe('create', () => {
 			createdDate: expect.any(Date),
 			createdBy: user.id,
 		}));
-
-		// s3 check
-		expect(putObject).toBeCalledTimes(1);
-		expect(putObject).toBeCalledWith(
-			'',
-			mongoResult.insertedId.toString(),
-			JSON.stringify(post.content),
-		);
 	});
 
 	test('should stop after failed db insert', async () => {
@@ -107,29 +84,6 @@ describe('create', () => {
 
 		// mongo check
 		expect(insert).toBeCalledTimes(1);
-
-		// s3 check
-		expect(putObject).toBeCalledTimes(0);
-	});
-
-	test('should raise error after failed s3 put', async () => {
-		// arrange
-		mockReturnValueOnce(insert, Promise.resolve(mongoResult));
-		mockReturnValueOnce(putObject, Promise.resolve(
-			Object.assign(s3Response, { $response: { error: {} } }),
-		));
-
-		// act
-		// assert
-		await expect(create(undefined, { post }, { isAuthenticated: true, user }))
-			.rejects
-			.toThrow('error on content save');
-
-		// mongo check
-		expect(insert).toBeCalledTimes(1);
-
-		// s3 check
-		expect(putObject).toBeCalledTimes(1);
 	});
 
 	test('should raise error if unauthenticated', async () => {
@@ -144,8 +98,5 @@ describe('create', () => {
 
 		// mongo check
 		expect(insert).toBeCalledTimes(0);
-
-		// s3 check
-		expect(putObject).toBeCalledTimes(0);
 	});
 });
