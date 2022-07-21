@@ -1,0 +1,84 @@
+scalar DateTime
+scalar JsonObject
+
+type Post {
+    id: ID!
+    shortUrl: String!
+    title: String!
+    description: String!
+    image: String!
+    imageLabel: String!
+    content: JsonObject!
+    createdDate: DateTime!
+    updatedDate: DateTime
+    createdBy: String!
+    updatedBy: String
+    availableFor: [String!]!
+}
+
+input CreatePostInput {
+    shortUrl: String!
+    title: String!
+    description: String!
+    image: String!
+    imageLabel: String!
+    content: JsonObject!
+}
+
+input UpdatePostInput {
+    shortUrl: String
+    title: String
+    description: String
+    image: String
+    imageLabel: String
+    content: JsonObject
+    availableToUsers: Boolean
+}
+
+input FilterPostsInput {
+    id: ID
+    shortUrl: String
+}
+
+input PaginationInput {
+    skip: Int!, 
+    take: Int!
+}
+
+type PostResult {
+    posts: [Post!]!
+    hasNext: Boolean!
+}
+
+type AppUser {
+    id: String!
+    externalId: String
+    email: String
+    provider: String!
+    roles: [String!]!
+}
+
+type AuthResult {
+    isAuthenticated: Boolean!
+    user: AppUser
+}
+
+type DeletePostResult {
+    success: Boolean!
+}
+
+type UpdatePostResult {
+    success: Int!
+    post: Post
+}
+
+type Query {
+    me: AuthResult!
+    posts(filter: FilterPostsInput, pagination: PaginationInput): PostResult!
+}
+
+type Mutation {
+    createPost(post: CreatePostInput!): Post!
+    updatePost(id: ID!, post: UpdatePostInput!): UpdatePostResult!
+    deletePost(id: ID!): DeletePostResult!
+}

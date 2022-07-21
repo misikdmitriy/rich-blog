@@ -5,13 +5,12 @@ name: Rich Blog CI
 
 on:
   push:
-    branches: [master]
+    branches: 
+      - '*'
 
 env:
   FE_PATH: frontend
   BE_PATH: services
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
 jobs:
   build_be:
@@ -36,8 +35,8 @@ jobs:
           cache-dependency-path: ./${{ env.BE_PATH }}/package-lock.json
       - run: npm install
       - run: npm run lint
-      - run: npm run build
       - run: npm test
+      - run: npm run build
 
   build_fe:
     runs-on: ubuntu-latest
@@ -61,44 +60,5 @@ jobs:
           cache-dependency-path: ./${{ env.FE_PATH }}/package-lock.json
       - run: npm install
       - run: npm run lint
-      - run: npm run build
       - run: npm test
-
-  deploy:
-    needs: build_fe
-    runs-on: ubuntu-latest
-
-    defaults:
-      run:
-        working-directory: ./stacks/${{ env.FE_PATH }}
-
-    steps:
-      - uses: hashicorp/setup-terraform@v2
-        with:
-          terraform_version: 1.2.3
-
-      - uses: actions/checkout@v2
-
-      - name: Terraform Format
-        run: terraform fmt
-
-      - name: Terraform Init
-        run: terraform init
-
-      - name: Terraform Validate
-        run: terraform validate -no-color
-
-      - name: Terraform Plan
-        run: terraform plan -no-color
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve -input=false
-
-      - name: Commit & Push
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@noreply.com"
-
-          git add .
-          git commit -m "Format Terraform"
-          git push
+      - run: npm run build
